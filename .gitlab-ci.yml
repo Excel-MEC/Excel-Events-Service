@@ -24,6 +24,9 @@ build:
     - docker push $DOCKER_IMAGE_NAME:staging
   tags:
     - docker
+  only:
+    - master@excel-mec/excel-events/Excel-Events-Service
+
 deploy:
   stage: deploy
   script:
@@ -34,3 +37,5 @@ deploy:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml pull
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml restart
+  only:
+    - master@excel-mec/excel-events/Excel-Events-Service
