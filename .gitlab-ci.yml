@@ -24,7 +24,7 @@ build:
   tags:
     - docker
   only:
-    - master@excel-mec/excel-events/Excel-Events-Service
+    - master@excel-mec/excel-events/excel-events-service
 
 deploy:
   stage: deploy
@@ -37,4 +37,4 @@ deploy:
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml pull
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml restart
   only:
-    - master@excel-mec/excel-events/Excel-Events-Service
+    - master@excel-mec/excel-events/excel-events-service
