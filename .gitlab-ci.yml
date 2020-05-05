@@ -1,8 +1,6 @@
 image: docker:git
 services:
   - docker:dind
-before_script:
-  - docker login -u excelmec -p $DOCKER_HUB_PASSWORD
 stages:
   - test
   - build
@@ -19,6 +17,7 @@ test:
 build:
   stage: build
   script:
+    - docker login -u excelmec -p $DOCKER_HUB_PASSWORD
     - cd Excel-Events-Backend
     - docker build -t $DOCKER_IMAGE_NAME:staging -f Production.Dockerfile .
     - docker push $DOCKER_IMAGE_NAME:staging
