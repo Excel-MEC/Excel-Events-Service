@@ -24,8 +24,6 @@ build:
     - docker push $DOCKER_IMAGE_NAME:staging
   tags:
     - docker
-  only:
-    - master@AjeshKumarS/Excel-Events-Service
 deploy:
   image: alpine
   stage: deploy
@@ -36,6 +34,4 @@ deploy:
     - chmod 600 ~/.ssh/id_dsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f Excel-Events-Service/$DEVELOPMENT_DOCKER_COMPOSE_FILE pull
-    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f Excel-Events-Service/$DEVELOPMENT_DOCKER_COMPOSE_FILE pull
-  only:
-    - master@AjeshKumarS/Excel-Events-Service
+    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f Excel-Events-Service/$DEVELOPMENT_DOCKER_COMPOSE_FILE restart
