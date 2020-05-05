@@ -1,0 +1,41 @@
+image: docker:git
+services:
+  - docker:dind
+before_script:
+  - docker login -u excelmec -p $DOCKER_HUB_PASSWORD
+stages:
+  - test
+  - build
+  - development
+  - deploy
+test:
+  stage: test
+  script:
+    - cd Excel-Events-Backend
+    - docker build -t tests -f Tests.Dockerfile .
+    - docker run tests
+  tags:
+    - docker
+build:
+  stage: build
+  script:
+    - cd Excel-Events-Backend
+    - docker build -t $DOCKER_IMAGE_NAME:staging -f Production.Dockerfile .
+    - docker push $DOCKER_IMAGE_NAME:staging
+  tags:
+    - docker
+  only:
+    - master@AjeshKumarS/Excel-Events-Backend
+deploy:
+  image: alpine
+  stage: deploy
+  script:
+    - apk add --no-cache rsync openssh
+    - mkdir -p ~/.ssh
+    - echo "$DEVELOPMENT_SERVER_PRIVATE_KEY" >> ~/.ssh/id_dsa
+    - chmod 600 ~/.ssh/id_dsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f Excel-Events-Service/$DEVELOPMENT_DOCKER_COMPOSE_FILE pull
+    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f Excel-Events-Service/$DEVELOPMENT_DOCKER_COMPOSE_FILE pull
+  only:
+    - master@AjeshKumarS/Excel-Events-Service
