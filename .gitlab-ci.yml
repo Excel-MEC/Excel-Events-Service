@@ -25,7 +25,7 @@ build:
   tags:
     - docker
   only:
-    - master@AjeshKumarS/Excel-Events-Backend
+    - master@AjeshKumarS/Excel-Events-Service
 deploy:
   image: alpine
   stage: deploy
