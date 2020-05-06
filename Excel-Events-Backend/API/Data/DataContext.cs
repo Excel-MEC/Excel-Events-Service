@@ -1,4 +1,5 @@
 using API.Models;
+using API.Models.FluentApi;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
@@ -9,7 +10,10 @@ namespace API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.AddEventModelConfig();
         }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventHead> EventHeads { get; set; }
     }
 
 }

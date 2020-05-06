@@ -6,9 +6,7 @@ namespace API.Helpers
 {
     public class SwaggerPathPrefix : IDocumentFilter
     {
-
-        private readonly string _pathPrefix;
-
+        public string _pathPrefix { get; set; }
         public SwaggerPathPrefix(string prefix)
         {
             this._pathPrefix = prefix;

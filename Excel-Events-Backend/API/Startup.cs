@@ -1,6 +1,8 @@
 using System;
 using API.Data;
+using API.Extensions;
 using API.Helpers;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,7 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add Controllers
             services.AddControllers();
             // Add Database to the Services
             services.AddDbContext<DataContext>(options =>
@@ -33,12 +36,26 @@ namespace API
                 else
                     options.UseNpgsql(connectionString);
             });
+
+            // Add Automapper to map objects of different types
+            services.AddAutoMapper(opt =>
+            {
+                opt.AddProfile(new AutoMapperProfiles());
+            });
+
+            // Adding Swagger for Documentation
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Excel Events", Version = "v 1.0" });
                 c.DocumentFilter<SwaggerPathPrefix>("api");
                 c.EnableAnnotations();
             });
+
+            // Adding Custom Services
+            services.AddCustomServices();
+
+            // Adding Repositories
+            services.AddRepositoryServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,10 +76,16 @@ namespace API
                 c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Excel Events");
             });
 
+            // Middleware for Routing
             app.UseRouting();
 
+            // Middleware for Authorization
             app.UseAuthorization();
 
+            // Middleware for catching exceptions and return custom messages
+            app.ConfigureExceptionHandlerMiddleware();
+
+            // Middleware for Specifying Endpoints
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
