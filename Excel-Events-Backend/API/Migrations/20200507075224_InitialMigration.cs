@@ -31,15 +31,15 @@ namespace API.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(nullable: true),
                     Icon = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<int>(nullable: false),
-                    EventTypeId = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: false, defaultValue: 0),
+                    EventTypeId = table.Column<int>(nullable: false, defaultValue: 0),
                     About = table.Column<string>(nullable: true),
                     Venue = table.Column<string>(nullable: true),
                     Datetime = table.Column<DateTime>(nullable: false),
                     EntryFee = table.Column<int>(nullable: true),
                     PrizeMoney = table.Column<int>(nullable: true),
-                    EventHead1Id = table.Column<int>(nullable: false),
-                    EventHead2Id = table.Column<int>(nullable: false),
+                    EventHead1Id = table.Column<int>(nullable: true),
+                    EventHead2Id = table.Column<int>(nullable: true),
                     IsTeam = table.Column<bool>(nullable: false),
                     TeamSize = table.Column<int>(nullable: true),
                     EventStatusId = table.Column<int>(nullable: false),
@@ -72,6 +72,12 @@ namespace API.Migrations
                 name: "IX_Events_EventHead2Id",
                 table: "Events",
                 column: "EventHead2Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_Name",
+                table: "Events",
+                column: "Name",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

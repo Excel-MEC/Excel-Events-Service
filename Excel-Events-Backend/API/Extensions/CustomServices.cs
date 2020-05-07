@@ -8,6 +8,11 @@ namespace API.Extensions
     {
         public static void AddCustomServices(this IServiceCollection services)
         {
+            // Add Google Cloud Storage
+            services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
+
+            // Add Event Service
+            services.AddScoped<IEventService, EventService>();
         }
     }
 }

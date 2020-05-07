@@ -19,6 +19,8 @@ services:
   events-api:
     image: excelmec/events-api:staging
     container_name: events-api
+    volumes:
+      - ./Excel-Events-Backend/API/Keys/:/api/Keys/
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:

@@ -30,28 +30,40 @@ namespace API.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
 
                     b.Property<int?>("CurrentRound")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
                     b.Property<DateTime>("Datetime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("EntryFee")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
-                    b.Property<int>("EventHead1Id")
-                        .HasColumnType("integer");
+                    b.Property<int?>("EventHead1Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
-                    b.Property<int>("EventHead2Id")
-                        .HasColumnType("integer");
+                    b.Property<int?>("EventHead2Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
                     b.Property<int>("EventStatusId")
                         .HasColumnType("integer");
 
                     b.Property<int>("EventTypeId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("Icon")
                         .HasColumnType("text");
@@ -63,13 +75,19 @@ namespace API.Migrations
                         .HasColumnType("text");
 
                     b.Property<int?>("NumberOfRounds")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
                     b.Property<int?>("PrizeMoney")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
                     b.Property<int?>("TeamSize")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(null);
 
                     b.Property<string>("Venue")
                         .HasColumnType("text");
@@ -79,6 +97,9 @@ namespace API.Migrations
                     b.HasIndex("EventHead1Id");
 
                     b.HasIndex("EventHead2Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Events");
                 });
@@ -109,14 +130,12 @@ namespace API.Migrations
                     b.HasOne("API.Models.EventHead", "EventHead1")
                         .WithMany()
                         .HasForeignKey("EventHead1Id")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("API.Models.EventHead", "EventHead2")
                         .WithMany()
                         .HasForeignKey("EventHead2Id")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 #pragma warning restore 612, 618
         }
