@@ -35,6 +35,35 @@ namespace API.Controllers
             return Ok(events);
         }
 
+        [SwaggerOperation(Description = "This route is for fetching event by applying filter")]
+        [HttpGet("event_type={eventType}&category={category}")]
+        public async Task<ActionResult> FilteredList(string eventType, string category)
+        {
+            int eventTypeId, categoryId;
+            eventTypeId = Array.IndexOf(Constants.EventType, eventType);
+            categoryId = Array.IndexOf(Constants.Category, category);
+            List<EventForListViewDto> filteredEvents = await _repo.FilteredList(eventTypeId, categoryId);
+            return Ok(filteredEvents);
+        }
+
+        [SwaggerOperation(Description = "This route is for fetching event by type")]
+        [HttpGet("type/{event_type}")]
+        public async Task<ActionResult> GetEventsOfType(string event_type)
+        {
+            int eventTypeId = Array.IndexOf(Constants.EventType, event_type);
+            List<EventForListViewDto> filteredEvents = await _repo.EventListOfType(eventTypeId);
+            return Ok(filteredEvents);
+        }
+
+        [SwaggerOperation(Description = "This route is for fetching event by category")]
+        [HttpGet("category/{category}")]
+        public async Task<ActionResult> GetEventsOfCategory(string category)
+        {
+            int categoryId = Array.IndexOf(Constants.EventType, category);
+            List<EventForListViewDto> filteredEvents = await _repo.EventListOfCategory(categoryId);
+            return Ok(filteredEvents);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Event>> GetEvent(int id)
         {
@@ -52,7 +81,7 @@ namespace API.Controllers
             throw new Exception("Something went wrong");
         }
 
-        [SwaggerOperation(Description = "This route is for Adding new Events")]
+        [SwaggerOperation(Description = "This route is for Updating Events")]
         [HttpPost("update")]
         public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
         {
