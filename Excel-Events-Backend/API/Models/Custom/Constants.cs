@@ -3,21 +3,21 @@ namespace API.Models.Custom
     public static class Constants
     {
         public static string[] Category = {
-            "Non Tech",
-            "Computer Science",
-            "General Tech"
+            "non_tech",
+            "computer_science",
+            "general_tech"
         };
         public static string[] EventType =  {
-            "General",
-            "Competition",
-            "Workshop",
-            "Talk",
-            "Conference"
+            "general",
+            "competition",
+            "workshop",
+            "talk",
+            "conference"
         };
         public static string[] EventStatus = {
-            "Yet To Start",
-            "Started",
-            "Finished"
+            "yet_to_start",
+            "started",
+            "finished"
         };
     }
 }

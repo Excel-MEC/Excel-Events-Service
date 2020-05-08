@@ -29,6 +29,38 @@ namespace API.Data
             return events;
         }
 
+        public async Task<List<EventForListViewDto>> EventListOfType(int eventTypeId)
+        {
+            List<Event> filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId).ToListAsync();
+            List<EventForListViewDto> events = new List<EventForListViewDto>();
+            foreach (var e in filteredEvents)
+            {
+                events.Add(_mapper.Map<EventForListViewDto>(e));
+            }
+            return events;
+        }
+        public async Task<List<EventForListViewDto>> EventListOfCategory(int categoryId)
+        {
+            List<Event> filteredEvents = await _context.Events.Where(e => e.CategoryId == categoryId).ToListAsync();
+            List<EventForListViewDto> events = new List<EventForListViewDto>();
+            foreach (var e in filteredEvents)
+            {
+                events.Add(_mapper.Map<EventForListViewDto>(e));
+            }
+            return events;
+        }
+
+        public async Task<List<EventForListViewDto>> FilteredList(int eventTypeId, int categoryId)
+        {
+            List<Event> filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId && e.CategoryId == categoryId).ToListAsync();
+            List<EventForListViewDto> events = new List<EventForListViewDto>();
+            foreach (var e in filteredEvents)
+            {
+                events.Add(_mapper.Map<EventForListViewDto>(e));
+            }
+            return events;
+        }
+
         public async Task<Event> GetEvent(int id)
         {
             Event eventFromdb = await _context.Events.Include(e => e.EventHead1).Include(e => e.EventHead2).FirstOrDefaultAsync(e => e.Id == id);

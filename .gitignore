@@ -6,6 +6,7 @@
 # .NET Core build folders
 /bin
 /obj
+core
 
 # Common node modules locations
 /node_modules
