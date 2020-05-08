@@ -34,7 +34,8 @@ deploy:
     - echo "$DEVELOPMENT_SERVER_PRIVATE_KEY" >> ~/.ssh/id_dsa
     - chmod 600 ~/.ssh/id_dsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml down
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml pull
-    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml restart
+    - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP docker-compose -f /home/excel/Excel-Events-Service/staging.docker-compose.yml up -d
   only:
     - master@excel-mec/excel-events/excel-events-service
