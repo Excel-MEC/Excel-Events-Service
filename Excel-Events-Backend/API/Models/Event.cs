@@ -13,6 +13,8 @@ namespace API.Models
         public int EventTypeId { get; set; }
         public string EventType => Constants.EventType[EventTypeId];
         public string About { get; set; }
+        public string Format { get; set; }
+        public string Rules { get; set; }
         public string Venue { get; set; }
         public DateTime Datetime { get; set; }
         public int? EntryFee { get; set; }

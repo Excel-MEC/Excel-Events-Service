@@ -10,6 +10,8 @@ namespace API.Dtos.Event
         public int? CategoryId { get; set; }
         public int? EventTypeId { get; set; }
         public string About { get; set; }
+        public string Fromat { get; set; }
+        public string Rules { get; set; }
         public string Venue { get; set; }
         public DateTime Datetime { get; set; }
         public int? EntryFee { get; set; }
