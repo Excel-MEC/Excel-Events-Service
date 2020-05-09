@@ -9,6 +9,7 @@ namespace API.Extensions
         public static void AddRepositoryServices(this IServiceCollection services)
         {
             services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IHighlightRepository, HighlightRepository>();
         }
     }
 }

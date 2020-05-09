@@ -14,6 +14,7 @@ namespace API.Data
         }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventHead> EventHeads { get; set; }
+        public DbSet<Highlight> Highlights { get; set; }
     }
 
 }

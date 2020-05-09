@@ -14,5 +14,6 @@ namespace API.Data.Interfaces
         Task<Event> GetEvent(int id);
         Task<bool> AddEvent(DataForAddingEventDto newEvent);
         Task<bool> UpdateEvent(DataForUpdatingEventDto newEvent);
+        Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent);
     }
 }

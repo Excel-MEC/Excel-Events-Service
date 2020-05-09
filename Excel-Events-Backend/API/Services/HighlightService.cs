@@ -12,31 +12,31 @@ using Microsoft.Extensions.Configuration;
 
 namespace API.Services
 {
-    public class EventService : IEventService
+    public class HighlightService : IHighlightService
     {
         private readonly ICloudStorage _cloudStorage;
         private readonly IConfiguration _configuration;
 
-        public EventService(ICloudStorage cloudStorage, IConfiguration configuration)
+        public HighlightService(ICloudStorage cloudStorage, IConfiguration configuration)
         {
             _cloudStorage = cloudStorage;
             _configuration = configuration;
         }
 
-        public async Task<string> UploadEventIcon(string name, IFormFile icon)
+        public async Task<string> UploadHighlightImage(string name, IFormFile icon)
         {
             string fileNameForStorage = GetFilenameForStorage(name, icon.FileName);
             await _cloudStorage.UploadFileAsync(icon, fileNameForStorage);
             string imageUrl = _configuration.GetSection("CloudStorageUrl").Value + fileNameForStorage;
             return imageUrl;
         }
-        public async Task DeleteEventIcon(int id, string filename)
+        public async Task DeleteHighlightImage(int id, string filename)
         {
             await _cloudStorage.DeleteFileAsync(GetFilenameForStorage(id.ToString(), filename));
         }
         private string GetFilenameForStorage(string name, string filename)
         {
-            return "events/icons/" + name + Path.GetExtension(filename);
+            return "events/highlights/" + name + Path.GetExtension(filename);
         }
     }
 }
