@@ -90,5 +90,15 @@ namespace API.Controllers
                 return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Something went wrong");
         }
+
+        [HttpPost("delete")]
+        public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
+        {
+            bool success = await _repo.DeleteEvent(dataForDeletingEvent);
+            if (success)
+                return Ok(new OkResponse { Response = "Success" });
+            throw new Exception("Error Deleting Event");
+        }
+
     }
 }

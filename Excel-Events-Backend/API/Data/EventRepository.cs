@@ -81,6 +81,18 @@ namespace API.Data
             }
             throw new Exception("Problem Saving Changes");
         }
+        public async Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
+        {
+            Event eventToDelete = await _context.Events.FindAsync(dataForDeletingEvent.Id);
+            if (eventToDelete.Name == dataForDeletingEvent.Name)
+            {
+                await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
+                _context.Events.Remove(await _context.Events.FindAsync(dataForDeletingEvent.Id));
+                bool success = await _context.SaveChangesAsync() > 0;
+                return success;
+            }
+            throw new Exception("Id and Name doesnot match");
+        }
 
         public async Task<bool> UpdateEvent(DataForUpdatingEventDto eventDataFromClient)
         {
@@ -88,6 +100,7 @@ namespace API.Data
             Event eventForUpdate = _mapper.Map<Event>(eventDataFromClient);
             if (eventDataFromClient.Icon != null)
             {
+                await _service.DeleteEventIcon(eventFromDb.Id, eventFromDb.Icon);
                 string imageUrl = await _service.UploadEventIcon(eventDataFromClient.Id.ToString(), eventDataFromClient.Icon);
                 if (!eventFromDb.Icon.Equals(imageUrl))
                     eventForUpdate.Icon = imageUrl;

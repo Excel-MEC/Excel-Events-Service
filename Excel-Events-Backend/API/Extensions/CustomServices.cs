@@ -13,6 +13,9 @@ namespace API.Extensions
 
             // Add Event Service
             services.AddScoped<IEventService, EventService>();
+
+            // Add Highlight Service
+            services.AddScoped<IHighlightService, HighlightService>();
         }
     }
 }
