@@ -6,13 +6,8 @@ services:
     container_name: nginx
     ports:
       - '80:80'
-      - '443:443'
     volumes:
       - ./staging.nginx.conf:/etc/nginx/conf.d/default.conf
-      - ../cert/:/var/www/html
-      - ../cert/dhparam/:/etc/ssl/certs/
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
     depends_on:
       - events-api
 
@@ -27,21 +22,5 @@ services:
       - GOOGLE_CLOUD_STORAGE_BUCKET=${GOOGLE_CLOUD_STORAGE_BUCKET}
       - CLOUD_STORAGE_URL=${CLOUD_STORAGE_URL}
       - API_PREFIX=${API_PREFIX}
-
     ports:
       - '5000:5000'
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-      - ../cert/:/var/www/html
-    depends_on:
-      - nginx
-    command: certonly --webroot --webroot-path=/var/www/html --email platform.excelmec@gmail.com --agree-tos --no-eff-email -d staging.events.excelmec.org
-
-volumes:
-  certbot-etc:
-  certbot-var:
