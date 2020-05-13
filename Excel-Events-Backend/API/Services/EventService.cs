@@ -15,19 +15,17 @@ namespace API.Services
     public class EventService : IEventService
     {
         private readonly ICloudStorage _cloudStorage;
-        private readonly IConfiguration _configuration;
 
-        public EventService(ICloudStorage cloudStorage, IConfiguration configuration)
+        public EventService(ICloudStorage cloudStorage)
         {
             _cloudStorage = cloudStorage;
-            _configuration = configuration;
         }
 
         public async Task<string> UploadEventIcon(string name, IFormFile icon)
         {
             string fileNameForStorage = GetFilenameForStorage(name, icon.FileName);
             await _cloudStorage.UploadFileAsync(icon, fileNameForStorage);
-            string imageUrl = _configuration.GetSection("CloudStorageUrl").Value + fileNameForStorage;
+            string imageUrl = Environment.GetEnvironmentVariable("CLOUD_STORAGE_URL") + fileNameForStorage;
             return imageUrl;
         }
         public async Task DeleteEventIcon(int id, string filename)

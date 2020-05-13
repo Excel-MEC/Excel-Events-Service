@@ -1,5 +1,9 @@
+using System;
+using System.Linq;
 using API.Dtos.Default;
+using API.Extensions;
 using API.Models.Custom;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -10,10 +14,12 @@ namespace API.Controllers
     [ApiController]
     public class DefaultController : ControllerBase
     {
+        [Authorize(Roles = "Admins, User")]
         [HttpGet]
         public ActionResult Get()
         {
-            return Ok(new OkResponse { Response = "success" });
+            return Ok("Success");
+            // return Ok(new OkResponse { Response = this.User.Claims.First(i => i.Type == "user_id").Value });
         }
 
         [HttpGet("constants")]

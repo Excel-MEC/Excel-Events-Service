@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  nginx:
+  events-nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: events-nginx
     ports:
-      - '80:80'
+      - '8000:80'
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
@@ -17,6 +17,12 @@ services:
     build:
       context: ./Excel-Events-Backend/.
       dockerfile: Development.Dockerfile
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - GOOGLE_CREDENTIAL_FILE=${GOOGLE_CREDENTIAL_FILE}
+      - GOOGLE_CLOUD_STORAGE_BUCKET=${GOOGLE_CLOUD_STORAGE_BUCKET}
+      - CLOUD_STORAGE_URL=${CLOUD_STORAGE_URL}
+      - API_PREFIX=${API_PREFIX}
     volumes:
       - /api/obj
       - /api/bin
