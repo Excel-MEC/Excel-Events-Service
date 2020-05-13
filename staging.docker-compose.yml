@@ -23,6 +23,11 @@ services:
       - ./Excel-Events-Backend/API/Keys/:/api/Keys/
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
+      - GOOGLE_CREDENTIAL_FILE=${GOOGLE_CREDENTIAL_FILE}
+      - GOOGLE_CLOUD_STORAGE_BUCKET=${GOOGLE_CLOUD_STORAGE_BUCKET}
+      - CLOUD_STORAGE_URL=${CLOUD_STORAGE_URL}
+      - API_PREFIX=${API_PREFIX}
+
     ports:
       - '5000:5000'
 

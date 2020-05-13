@@ -15,19 +15,17 @@ namespace API.Services
     public class HighlightService : IHighlightService
     {
         private readonly ICloudStorage _cloudStorage;
-        private readonly IConfiguration _configuration;
 
-        public HighlightService(ICloudStorage cloudStorage, IConfiguration configuration)
+        public HighlightService(ICloudStorage cloudStorage)
         {
             _cloudStorage = cloudStorage;
-            _configuration = configuration;
         }
 
         public async Task<string> UploadHighlightImage(string name, IFormFile icon)
         {
             string fileNameForStorage = GetFilenameForStorage(name, icon.FileName);
             await _cloudStorage.UploadFileAsync(icon, fileNameForStorage);
-            string imageUrl = _configuration.GetSection("CloudStorageUrl").Value + fileNameForStorage;
+            string imageUrl = Environment.GetEnvironmentVariable("CLOUD_STORAGE_URL") + fileNameForStorage;
             return imageUrl;
         }
         public async Task DeleteHighlightImage(int id, string filename)

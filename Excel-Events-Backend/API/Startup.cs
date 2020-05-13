@@ -31,10 +31,7 @@ namespace API
             services.AddDbContext<DataContext>(options =>
             {
                 string connectionString = Environment.GetEnvironmentVariable("POSTGRES_DB");
-                if (connectionString == null)
-                    options.UseNpgsql(Configuration.GetSection("DatabaseConfig")["PostgresDb"]);
-                else
-                    options.UseNpgsql(connectionString);
+                options.UseNpgsql(connectionString);
             });
 
             // Add Automapper to map objects of different types
@@ -47,7 +44,7 @@ namespace API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Excel Events", Version = "v 1.0" });
-                c.DocumentFilter<SwaggerPathPrefix>("api");
+                c.DocumentFilter<SwaggerPathPrefix>(Environment.GetEnvironmentVariable("API_PREFIX"));
                 c.EnableAnnotations();
             });
 
@@ -56,6 +53,10 @@ namespace API
 
             // Adding Repositories
             services.AddRepositoryServices();
+
+
+            services.AddAuthentication("Basic").AddScheme<BasicAuthenticationOptions, CustomAuthenticationHandler>("Basic", null);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,11 +74,13 @@ namespace API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Excel Events");
+                c.SwaggerEndpoint("/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json", "Excel Events");
             });
 
             // Middleware for Routing
             app.UseRouting();
+
+            app.UseAuthentication();
 
             // Middleware for Authorization
             app.UseAuthorization();
