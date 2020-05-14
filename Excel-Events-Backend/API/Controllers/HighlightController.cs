@@ -8,6 +8,7 @@ using API.Models;
 using API.Models.Custom;
 using API.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -36,6 +37,7 @@ namespace API.Controllers
             return Ok(events);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<OkResponse>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
         {
@@ -45,6 +47,7 @@ namespace API.Controllers
             throw new Exception("Failed to Add Highlight");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("delete")]
         public async Task<ActionResult<OkResponse>> Delete(DataForDeletingHighlightDto dataForDeletingHighlight)
         {

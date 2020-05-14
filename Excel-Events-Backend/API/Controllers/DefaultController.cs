@@ -14,7 +14,6 @@ namespace API.Controllers
     [ApiController]
     public class DefaultController : ControllerBase
     {
-        [Authorize(Roles = "Admins, User")]
         [HttpGet]
         public ActionResult Get()
         {
