@@ -7,6 +7,7 @@ using API.Models;
 using API.Models.Custom;
 using API.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -72,6 +73,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "This route is for Adding new Events")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("add")]
         public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
         {
@@ -82,6 +84,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "This route is for Updating Events")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("update")]
         public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
         {
@@ -92,6 +95,7 @@ namespace API.Controllers
         }
 
         [HttpPost("delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
             bool success = await _repo.DeleteEvent(dataForDeletingEvent);
