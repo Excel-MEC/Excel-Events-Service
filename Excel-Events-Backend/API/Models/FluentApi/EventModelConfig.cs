@@ -66,6 +66,12 @@ namespace API.Models.FluentApi
                 .WithMany()
                 .HasForeignKey(e => e.EventHead2Id)
                 .OnDelete(DeleteBehavior.SetNull);
+            
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Registrations)
+                .WithOne(r => r.Event)
+                .HasForeignKey(r => r.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

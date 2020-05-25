@@ -11,10 +11,12 @@ namespace API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.AddEventModelConfig();
+            modelBuilder.AddRegistrationModelConfig();
         }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventHead> EventHeads { get; set; }
         public DbSet<Highlight> Highlights { get; set; }
+        public DbSet<Registration> Registrations { get; set; }
     }
 
 }
