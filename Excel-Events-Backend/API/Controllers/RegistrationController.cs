@@ -40,7 +40,7 @@ namespace API.Controllers
         {
             var success = await _repo.ClearUserData(data.Id);
             if(success) return Ok(new OkResponse { Response = "Success"});
-            throw new Exception("Problem clearing user data");
+            throw new Exception("Problem clearing user data. Check out the userid");
         }
 
         [SwaggerOperation(Description = "List of events registered by a user")]

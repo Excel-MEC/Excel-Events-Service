@@ -5,6 +5,8 @@ using API.Dtos.Event;
 using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 
 namespace API.Data
 {
@@ -20,38 +22,28 @@ namespace API.Data
 
         public async Task<bool> ClearUserData(int excelId)
         {
-            List<Registration> registeredEventList = await _context.Registrations.ToListAsync();
-            foreach (var e in registeredEventList)
-            {
-                if (e.ExcelId == excelId)
-                {
-                    _context.Remove(e);
-                }
-            }
+            List<Registration> registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();            
+            _context.RemoveRange(registeredEventList);
             var success = await _context.SaveChangesAsync() > 0;
             return success;
         }
 
         public async Task<List<EventForListViewDto>> EventList(int excelId)
         {
-            List<Registration> registeredEventList = await _context.Registrations.Include(x => x.Event).ToListAsync();
+            List<Registration> registrations = await _context.Registrations.Where(r => r.ExcelId == excelId).Include(x => x.Event).ToListAsync();
             List<EventForListViewDto> eventList = new List<EventForListViewDto>();
-            foreach (var x in registeredEventList)
+            foreach (var x in registrations)
             {
-                if (x.ExcelId == excelId)
-                {
-                    var eventForView = _mapper.Map<EventForListViewDto>(x.Event);
-                    eventList.Add(eventForView);
-                }
+                var eventForView = _mapper.Map<EventForListViewDto>(x.Event);
+                eventList.Add(eventForView);
             }
             return eventList;
         }
 
         public async Task<bool> HasRegistered(int excelId, int eventId)
         {
-            List<Registration> registeredEventList = await _context.Registrations.Include(x => x.Event).ToListAsync();
-            var success = registeredEventList.Find(r => r.ExcelId==excelId && r.EventId == eventId);
-            if(success!=null) return true;
+            var success = await _context.Registrations.Include(x => x.Event).FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
+            if (success != null) return true;
             return false;
         }
 
