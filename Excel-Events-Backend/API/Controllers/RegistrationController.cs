@@ -6,6 +6,7 @@ using API.Data.Interfaces;
 using API.Dtos.Event;
 using API.Dtos.Registration;
 using API.Models.Custom;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -33,6 +34,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "Clears the user data from registration table upon user deletion")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> ClearUserData(DataFromClientDto data)
         {
@@ -50,20 +52,21 @@ namespace API.Controllers
             return list;
         }
 
+        [Authorize(Roles = "Admin")]
         [SwaggerOperation(Description = "List of users registered for an event")]
-        [HttpGet("event/{id}/users")]
-        public async Task<ActionResult<List<int>>> UserList(string id)
+        [HttpGet("{eventId}/users")]
+        public async Task<ActionResult<List<int>>> UserList(string eventId)
         {
-            var list = await _repo.UserList(int.Parse(id));
+            var list = await _repo.UserList(int.Parse(eventId));
             return list;
         }
 
         [SwaggerOperation(Description = "Checks whether a user has registered for an event")]
-        [HttpGet("event/{id}")]
-        public async Task<ActionResult<bool>> HasRegistered(string id)
+        [HttpGet("{eventId}")]
+        public async Task<ActionResult<bool>> HasRegistered(string eventId)
         {
             int excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
-            var success = await _repo.HasRegistered(excelId, int.Parse(id));
+            var success = await _repo.HasRegistered(excelId, int.Parse(eventId));
             return Ok(success);
         }
 
