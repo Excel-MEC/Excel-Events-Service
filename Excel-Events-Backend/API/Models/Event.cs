@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using API.Models.Custom;
 
 namespace API.Models
@@ -29,5 +30,7 @@ namespace API.Models
         public string EventStatus => Constants.EventStatus[EventStatusId];
         public int? NumberOfRounds { get; set; }
         public int? CurrentRound { get; set; }
+        public ICollection<Registration> Registrations { get; set; }
+        public ICollection<Bookmark> Bookmarks { get; set; }
     }
 }

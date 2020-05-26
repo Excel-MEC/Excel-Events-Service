@@ -48,7 +48,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("delete")]
+        [HttpDelete]
         public async Task<ActionResult<OkResponse>> Delete(DataForDeletingHighlightDto dataForDeletingHighlight)
         {
             bool success = await _repo.DeleteHighlight(dataForDeletingHighlight);

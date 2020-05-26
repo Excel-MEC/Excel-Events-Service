@@ -74,7 +74,7 @@ namespace API.Controllers
 
         [SwaggerOperation(Description = "This route is for Adding new Events")]
         [Authorize(Roles = "Admin")]
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
         {
             bool success = await _repo.AddEvent(eventDataFromClient);
@@ -85,7 +85,7 @@ namespace API.Controllers
 
         [SwaggerOperation(Description = "This route is for Updating Events")]
         [Authorize(Roles = "Admin")]
-        [HttpPost("update")]
+        [HttpPut]
         public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
         {
             bool success = await _repo.UpdateEvent(eventDataFromClient);
@@ -94,8 +94,8 @@ namespace API.Controllers
             throw new Exception("Something went wrong");
         }
 
-        [HttpPost("delete")]
         [Authorize(Roles = "Admin")]
+        [HttpDelete]    
         public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
             bool success = await _repo.DeleteEvent(dataForDeletingEvent);
