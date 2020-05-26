@@ -22,7 +22,7 @@ namespace API.Data
 
         public async Task<bool> ClearUserData(int excelId)
         {
-            List<Registration> registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();            
+            List<Registration> registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
             _context.RemoveRange(registeredEventList);
             var success = await _context.SaveChangesAsync() > 0;
             return success;
@@ -40,9 +40,20 @@ namespace API.Data
             return eventList;
         }
 
+        // marks the bookmarked event as registered upon registration of that event.
+        private async Task<bool> HasBookmarked(int excelId, int eventId)
+        {
+            var fav = await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
+            if (fav != null)
+            {
+                fav.IsRegistered = true;
+            }
+            return false;
+        }
+
         public async Task<bool> HasRegistered(int excelId, int eventId)
         {
-            var success = await _context.Registrations.Include(x => x.Event).FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
+            var success = await _context.Registrations.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
             if (success != null) return true;
             return false;
         }
@@ -54,6 +65,7 @@ namespace API.Data
             user.ExcelId = excelId;
             _context.Registrations.Add(user);
             bool success = await _context.SaveChangesAsync() > 0;
+            var hasChanged = await HasBookmarked(excelId, eventId);
             return success;
         }
 

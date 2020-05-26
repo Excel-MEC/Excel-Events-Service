@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Bookmark;
+using API.Dtos.Registration;
 using API.Models.Custom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace API.Controllers
 {
     [SwaggerTag("The routes under this controller are for bookmarking various events")]
+    [Authorize]
     [Route("/bookmark")]    
     [ApiController]
 
@@ -22,7 +24,7 @@ namespace API.Controllers
         {
             _repo = repo;
         }
-        [SwaggerOperation(Description = "Event Registration")]
+        [SwaggerOperation(Description = "Bookmark Event")]
         [HttpPost]
         public async Task<ActionResult> Add(DataFromClientDto data)
         {
@@ -35,14 +37,15 @@ namespace API.Controllers
         [SwaggerOperation(Description = " Remove all bookmarks of an user")]
         [Authorize(Roles = "Admin")]
         [HttpDelete]
-        public async Task<ActionResult> RemoveAll(DataFromClientDto data)
+        public async Task<ActionResult> RemoveAll()
         {
-            var success = await _repo.RemoveAll(data.Id);
+            int id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var success = await _repo.RemoveAll(id);
             if(success) return Ok(new OkResponse { Response = "Success"});
             throw new Exception("Problem clearing bookmarks. Check out the userid");
         }
 
-        [SwaggerOperation(Description = "List of events registered by a user")]
+        [SwaggerOperation(Description = "List of events bookmarked by a user")]
         [HttpGet]
         public async Task<ActionResult<List<EventForBookmarkListViewDto>>> EventList()
         {
@@ -52,7 +55,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "Removes a particular bookmarked event")]
-        [HttpGet("{eventId}/users")]
+        [HttpDelete("{eventId}")]
         public async Task<ActionResult<List<int>>> Remove(string eventId)
         {
             int excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);

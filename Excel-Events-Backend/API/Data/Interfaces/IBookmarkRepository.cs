@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Dtos.Bookmark;
+using API.Models;
 
 namespace API.Data.Interfaces
 {

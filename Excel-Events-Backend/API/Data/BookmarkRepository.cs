@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,12 +13,12 @@ namespace API.Data
     public class BookmarkRepository : IBookmarkRepository
     {
         private readonly DataContext _context;
-        private readonly IRegistrationRepository _repo;
         private readonly IMapper _mapper;
-        public BookmarkRepository(DataContext context, IRegistrationRepository repo, IMapper mapper)
+        private readonly IRegistrationRepository _repo;
+        public BookmarkRepository(DataContext context, IMapper mapper, IRegistrationRepository repo)
         {
-            _mapper = mapper;
             _repo = repo;
+            _mapper = mapper;
             _context = context;
         }
 
@@ -39,6 +40,7 @@ namespace API.Data
             foreach (var x in registrations)
             {
                 var eventForView = _mapper.Map<EventForBookmarkListViewDto>(x.Event);
+                eventForView.IsRegistered = x.IsRegistered;
                 eventList.Add(eventForView);
             }
             return eventList;
@@ -46,7 +48,7 @@ namespace API.Data
 
         public async Task<bool> Remove(int excelId, int eventId)
         {
-            var fav = await _context.Bookmarks.Include(x => x.Event).FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
+            var fav = await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
             _context.Remove(fav);
             var success = await _context.SaveChangesAsync() > 0;
             return success;
