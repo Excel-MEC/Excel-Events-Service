@@ -11,6 +11,7 @@ namespace API.Extensions
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IHighlightRepository, HighlightRepository>();
             services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+            services.AddScoped<IBookmarkRepository, BookmarkRepository>();
         }
     }
 }

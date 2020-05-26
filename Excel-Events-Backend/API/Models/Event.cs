@@ -31,5 +31,6 @@ namespace API.Models
         public int? NumberOfRounds { get; set; }
         public int? CurrentRound { get; set; }
         public ICollection<Registration> Registrations { get; set; }
+        public ICollection<Bookmark> Bookmarks { get; set; }
     }
 }

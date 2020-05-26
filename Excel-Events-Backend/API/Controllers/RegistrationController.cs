@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace API.Controllers
 {
     [SwaggerTag("The routes under this controller are for event registration.")]
+    [Authorize]
     [Route("/registration")]    
     [ApiController]
     public class RegistrationController : ControllerBase
