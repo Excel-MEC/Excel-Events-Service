@@ -1,3 +1,4 @@
+using API.Dtos.Bookmark;
 using API.Dtos.Event;
 using API.Models;
 using AutoMapper;
@@ -13,6 +14,7 @@ namespace API.Helpers
             CreateMap<Event, EventForListViewDto>();
             CreateMap<DataForUpdatingEventDto, Event>()
                 .ForMember(dest => dest.Icon, opt => opt.Ignore());
+            CreateMap<Event, EventForBookmarkListViewDto>();
         }
     }
 }
