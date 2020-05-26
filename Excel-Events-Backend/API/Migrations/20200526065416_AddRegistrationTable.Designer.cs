@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200524180017_AddRegistrationTable")]
+    [Migration("20200526065416_AddRegistrationTable")]
     partial class AddRegistrationTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
