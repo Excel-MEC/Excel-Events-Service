@@ -24,44 +24,32 @@ namespace API.Data
         public async Task<List<EventForScheduleListViewDto>> EventList()
         {
             List<EventForScheduleListViewDto> eventForScheduleList = new List<EventForScheduleListViewDto>();
-            var events = _context.Events
-                            .ToLookup(
-                                x => x.Day
-                                )
-                            .OrderBy(x => x.Key)
-                            .ToList();
-
-            // .FromSqlRaw("SELECT \"Day\" as \"Id\",json_agg(events ORDER By \"Datetime\") as Events FROM \"public\".\"Events\" as events GROUP BY \"Day\"")
-
-
-            // foreach (var group in events)
-            // {    
-            //     EventForScheduleListViewDto eventForSchedule = new EventForScheduleListViewDto();
-            //     eventForSchedule.Day = group.Key;
-            //     List<EventForListViewDto> eventList = new List<EventForListViewDto>();
-            //     foreach (var e in group)
-            //     {
-
-            //         var newEvent = _mapper.Map<EventForListViewDto>(e);
-            //         eventList.Add(newEvent);
-            //     }
-            //     eventForSchedule.Events = eventList;
-            //     eventForScheduleList.Add(eventForSchedule);
-            // }
-            // // return Map(events);
+            var query = await _context.Events.ToListAsync();
+            var events = query.GroupBy(x => x.Day)
+                              .Select(g => new { g.Key, Events = g.OrderBy(x => x.Datetime).ToList() })
+                              .OrderBy(x => x.Key)
+                              .ToList();
+            foreach (var group in events)
+            {    
+                EventForScheduleListViewDto eventForSchedule = new EventForScheduleListViewDto();
+                var eventList = Map(group.Events);
+                eventForSchedule.Day = group.Key; 
+                eventForSchedule.Events = eventList;
+                eventForScheduleList.Add(eventForSchedule);
+            }
             return eventForScheduleList;
         }
 
-        // private List<EventForListViewDto> Map(List<Event> events)
-        // {
-        //     List<EventForListViewDto> eventList = new List<EventForListViewDto>();
-        //     foreach (var e in events)
-        //     {
+        private List<EventForListViewDto> Map(List<Event> events)
+        {
+            List<EventForListViewDto> eventList = new List<EventForListViewDto>();
+            foreach (var e in events)
+            {
 
-        //         var newEvent = _mapper.Map<EventForListViewDto>(e);
-        //         eventList.Add(newEvent);
-        //     }
-        //     return eventList;
-        // }
+                var newEvent = _mapper.Map<EventForListViewDto>(e);
+                eventList.Add(newEvent);
+            }
+            return eventList;
+        }
     }
 }
