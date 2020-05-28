@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
-using API.Dtos.Event;
 using API.Dtos.Highlight;
 using API.Models;
 using API.Models.Custom;
