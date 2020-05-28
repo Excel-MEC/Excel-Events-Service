@@ -1,12 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
 using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System;
 
 namespace API.Data
 {

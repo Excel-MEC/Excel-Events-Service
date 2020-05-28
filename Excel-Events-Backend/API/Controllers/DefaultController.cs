@@ -1,9 +1,5 @@
-using System;
-using System.Linq;
 using API.Dtos.Default;
-using API.Extensions;
 using API.Models.Custom;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

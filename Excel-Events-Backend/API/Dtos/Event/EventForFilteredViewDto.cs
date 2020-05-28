@@ -9,6 +9,7 @@ namespace API.Dtos.Event
         public string Icon { get; set; }
         public int EventTypeId { get; set; }
         public int CategoryId { get; set; }
+        public int Day { get; set; }
         public DateTime Datetime { get; set; }
     }
 }
