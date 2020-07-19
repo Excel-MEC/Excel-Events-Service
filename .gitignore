@@ -3,6 +3,10 @@
 # Edit at https://www.gitignore.io/?templates=jetbrains,dotnetcore,visualstudio,visualstudiocode
 
 ### DotnetCore ###
+
+## Microsoft Generated Files
+packages-microsoft-prod.deb
+
 # .NET Core build folders
 /bin
 /obj
