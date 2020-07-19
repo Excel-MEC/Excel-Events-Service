@@ -29,6 +29,7 @@ namespace API.Controllers
             _service = service;
         }
 
+        [SwaggerOperation(Description = "This route is for listing all the events")]
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> Get()
         {

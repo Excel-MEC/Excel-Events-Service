@@ -11,5 +11,6 @@ namespace API.Dtos.Event
         public int CategoryId { get; set; }
         public int Day { get; set; }
         public DateTime Datetime { get; set; }
+        public bool? NeedRegistration { get; set; }
     }
 }

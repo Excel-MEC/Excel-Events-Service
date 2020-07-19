@@ -21,7 +21,7 @@ namespace API.Extensions
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.ContainsKey("Authorization"))
-                return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
+                return Task.FromResult(AuthenticateResult.NoResult());
             string authorizationHeader = Request.Headers["Authorization"];
             if (string.IsNullOrEmpty(authorizationHeader))
                 return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
@@ -34,6 +34,7 @@ namespace API.Extensions
                 Console.WriteLine(e.Message);
                 return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
             }
+
         }
 
         private AuthenticateResult ValidateToken(string token)
