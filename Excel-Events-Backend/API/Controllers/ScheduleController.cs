@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for event schedule.")]
+    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Schedules table.")]
     [Route("/schedule")]
     [ApiController]
     public class ScheduleController : ControllerBase
@@ -20,7 +20,7 @@ namespace API.Controllers
             _repo = repo;
         }
 
-        [SwaggerOperation(Description = "Event Schedule")]
+        [SwaggerOperation(Description = " This route is for returning all the events in the scheduled order. ")]
         [HttpGet]   
         public async Task<List<EventForScheduleListViewDto>> EventList()
         {    

@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for event registration.")]
+    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Registrations table.")]
     [Authorize]
     [Route("/registration")]    
     [ApiController]
@@ -24,7 +24,7 @@ namespace API.Controllers
             _repo = repo;
         }
 
-        [SwaggerOperation(Description = "Event Registration")]
+        [SwaggerOperation(Description = " This route is used to provide event registration. ")]
         [HttpPost]
         public async Task<ActionResult> Register(DataFromClientDto data)
         {
@@ -34,7 +34,7 @@ namespace API.Controllers
             throw new Exception("Problem registering user");
         }
 
-        [SwaggerOperation(Description = "Clears the user data from registration table upon user deletion")]
+        [SwaggerOperation(Description = " This route is used to clear a user's data from registration table when the user account is deleted. Only admins can access this route. ")]
         [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> ClearUserData(DataFromClientDto data)
@@ -44,7 +44,7 @@ namespace API.Controllers
             throw new Exception("Problem clearing user data. Check out the userid");
         }
 
-        [SwaggerOperation(Description = "List of events registered by a user")]
+        [SwaggerOperation(Description = " This route is to return a list of events registered by a user. ")]
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> EventList()
         {
@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [SwaggerOperation(Description = "List of users registered for an event")]
+        [SwaggerOperation(Description = " This route is used to return a list of users,registered for an event. Only admins can access this route. ")]
         [HttpGet("{eventId}/users")]
         public async Task<ActionResult<List<int>>> UserList(string eventId)
         {
@@ -62,7 +62,7 @@ namespace API.Controllers
             return list;
         }
 
-        [SwaggerOperation(Description = "Checks whether a user has registered for an event")]
+        [SwaggerOperation(Description = " This route is used to check whether a user has registered for an event or not. ")]
         [HttpGet("{eventId}")]
         public async Task<ActionResult<bool>> HasRegistered(string eventId)
         {

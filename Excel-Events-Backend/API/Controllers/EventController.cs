@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for perfoming CRUD optrations on Events table.")]
+    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Events table.")]
     [Route("/events")]
     [ApiController]
     public class EventController : ControllerBase
@@ -29,7 +29,7 @@ namespace API.Controllers
             _service = service;
         }
 
-        [SwaggerOperation(Description = "This route is for listing all the events")]
+        [SwaggerOperation(Description = " This route returns a list of all the events. ")]
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> Get()
         {
@@ -37,7 +37,7 @@ namespace API.Controllers
             return Ok(events);
         }
 
-        [SwaggerOperation(Description = "This route is for fetching event by applying filter")]
+        [SwaggerOperation(Description = " This route returns all the events that matches the applied filters. ")]
         [HttpGet("event_type={eventType}&category={category}")]
         public async Task<ActionResult> FilteredList(string eventType, string category)
         {
@@ -48,7 +48,7 @@ namespace API.Controllers
             return Ok(filteredEvents);
         }
 
-        [SwaggerOperation(Description = "This route is for fetching event by type")]
+        [SwaggerOperation(Description = " This route returns all the events that matches the given event type.")]
         [HttpGet("type/{event_type}")]
         public async Task<ActionResult> GetEventsOfType(string event_type)
         {
@@ -57,7 +57,7 @@ namespace API.Controllers
             return Ok(filteredEvents);
         }
 
-        [SwaggerOperation(Description = "This route is for fetching event by category")]
+        [SwaggerOperation(Description = "This route returns all the events that matches the given event category. ")]
         [HttpGet("category/{category}")]
         public async Task<ActionResult> GetEventsOfCategory(string category)
         {
@@ -73,7 +73,7 @@ namespace API.Controllers
             return Ok(eventFromRepo);
         }
 
-        [SwaggerOperation(Description = "This route is for Adding new Events")]
+        [SwaggerOperation(Description = " This route is for adding new events. Only admins can access this route. ")]
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
@@ -84,7 +84,7 @@ namespace API.Controllers
             throw new Exception("Something went wrong");
         }
 
-        [SwaggerOperation(Description = "This route is for Updating Events")]
+        [SwaggerOperation(Description = "This route is for updating event details. Only admins can access this route.")]
         [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
@@ -95,6 +95,7 @@ namespace API.Controllers
             throw new Exception("Something went wrong");
         }
 
+        [SwaggerOperation(Description = "This route is for deleting an event. Only admins can access this route.")]
         [Authorize(Roles = "Admin")]
         [HttpDelete]    
         public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)

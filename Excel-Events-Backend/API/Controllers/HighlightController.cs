@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for perfoming CRUD optrations on Highlights table.")]
+    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Highlights table.")]
     [Route("/highlights")]
     [ApiController]
     public class HighlightController : ControllerBase
@@ -29,13 +29,15 @@ namespace API.Controllers
             _service = service;
         }
 
+        [SwaggerOperation(Description = "This route is for listing the event highlights. ")]
         [HttpGet]
         public async Task<ActionResult<List<Highlight>>> Get()
         {
             List<Highlight> events = await _repo.GetHighlights();
             return Ok(events);
         }
-
+        
+        [SwaggerOperation(Description = "This route is for adding an event highlight. Only admins can access this route.")]
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<OkResponse>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
@@ -46,6 +48,7 @@ namespace API.Controllers
             throw new Exception("Failed to Add Highlight");
         }
 
+        [SwaggerOperation(Description = "This route is for deleting an event highlight. Only admins can access this route.")]
         [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult<OkResponse>> Delete(DataForDeletingHighlightDto dataForDeletingHighlight)

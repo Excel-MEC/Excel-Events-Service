@@ -16,7 +16,8 @@ namespace API.Controllers
             return Ok("Success");
             // return Ok(new OkResponse { Response = this.User.Claims.First(i => i.Type == "user_id").Value });
         }
-
+        
+        [SwaggerOperation(Description = "This route is for listing all the constants like the event category, event type, event status.")]
         [HttpGet("constants")]
         public ActionResult GetConstants()
         {
