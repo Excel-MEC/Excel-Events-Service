@@ -11,5 +11,7 @@ namespace API.Dtos.Bookmark
         public string Category { get; set; }
         public DateTime Datetime { get; set; }
         public bool IsRegistered { get; set; }
+        public bool NeedRegistration { get; set; }
+
     }
 }

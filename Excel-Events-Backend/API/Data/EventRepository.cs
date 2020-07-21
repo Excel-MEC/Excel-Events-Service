@@ -133,6 +133,7 @@ namespace API.Data
             dest.EventStatusId = src.EventStatusId;
             dest.NumberOfRounds = src.NumberOfRounds;
             dest.CurrentRound = src.CurrentRound;
+            dest.NeedRegistration = src.NeedRegistration;
         }
     }
 }

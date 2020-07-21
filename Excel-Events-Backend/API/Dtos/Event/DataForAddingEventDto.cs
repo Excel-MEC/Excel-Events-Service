@@ -24,5 +24,6 @@ namespace API.Dtos.Event
         public int? EventStatusId { get; set; }
         public int? NumberOfRounds { get; set; }
         public int? CurrentRound { get; set; }
+        public bool? NeedRegistration { get; set; }
     }
 }

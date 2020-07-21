@@ -33,5 +33,6 @@ namespace API.Models
         public int? CurrentRound { get; set; }
         public ICollection<Registration> Registrations { get; set; }
         public ICollection<Bookmark> Bookmarks { get; set; }
+        public bool? NeedRegistration { get; set; }
     }
 }

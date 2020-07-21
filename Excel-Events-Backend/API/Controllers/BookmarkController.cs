@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for bookmarking various events")]
+    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Bookmarks table.")]
     [Authorize]
     [Route("/bookmark")]    
     [ApiController]
@@ -24,7 +24,8 @@ namespace API.Controllers
         {
             _repo = repo;
         }
-        [SwaggerOperation(Description = "Bookmark Event")]
+
+        [SwaggerOperation(Description = " This route is for bookmarking an event. ")]
         [HttpPost]
         public async Task<ActionResult> Add(DataFromClientDto data)
         {
@@ -34,7 +35,7 @@ namespace API.Controllers
             throw new Exception("Problem in bookmarking the event");
         }
 
-        [SwaggerOperation(Description = " Remove all bookmarks of an user")]
+        [SwaggerOperation(Description = " This route is to remove all bookmarks of a user when the user account is deleted. Only admins can access this route. ")]
         [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> RemoveAll()
@@ -45,7 +46,7 @@ namespace API.Controllers
             throw new Exception("Problem clearing bookmarks. Check out the userid");
         }
 
-        [SwaggerOperation(Description = "List of events bookmarked by a user")]
+        [SwaggerOperation(Description = " This route is for listing all the events bookmarked by a user. ")]
         [HttpGet]
         public async Task<ActionResult<List<EventForBookmarkListViewDto>>> EventList()
         {
@@ -54,7 +55,7 @@ namespace API.Controllers
             return list;
         }
 
-        [SwaggerOperation(Description = "Removes a particular bookmarked event")]
+        [SwaggerOperation(Description = " This route is to remove a bookmarked event by the user. ")]
         [HttpDelete("{eventId}")]
         public async Task<ActionResult<List<int>>> Remove(string eventId)
         {
