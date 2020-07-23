@@ -85,7 +85,7 @@ namespace API.Controllers
 
         [SwaggerOperation(Description = " This route is for adding new round. ")]
         [Authorize(Roles = "Admin")]
-        [HttpPost("round/")]   
+        [HttpPost("round")]   
         public async Task<ActionResult> AddRound(DataForAddingEventRoundDto data)
         {    
             var success =  await _repo.AddRound(data);
