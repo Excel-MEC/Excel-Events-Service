@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,11 +60,11 @@ namespace API.Data
 
         public async Task<bool> Register(int excelId, int eventId)
         {
-            Registration user = new Registration();
-            user.EventId = eventId;
-            user.ExcelId = excelId;
-            _context.Registrations.Add(user);
-            bool success = await _context.SaveChangesAsync() > 0;
+            var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
+            if (!(bool) eventToRegister.NeedRegistration) throw new Exception("This event need no registration.");
+            var user = new Registration {EventId = eventId, ExcelId = excelId};
+            await _context.Registrations.AddAsync(user);
+            var success = await _context.SaveChangesAsync() > 0;
             var hasChanged = await HasBookmarked(excelId, eventId);
             return success;
         }
