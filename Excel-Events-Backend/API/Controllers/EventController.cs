@@ -82,17 +82,7 @@ namespace API.Controllers
                 return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Something went wrong");
         }
-
-        [SwaggerOperation(Description = " This route is for adding new round. ")]
-        [Authorize(Roles = "Admin")]
-        [HttpPost("round")]   
-        public async Task<ActionResult> AddRound(DataForAddingEventRoundDto data)
-        {    
-            var success =  await _repo.AddRound(data);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in adding new round.");
-        }
-        
+       
         [SwaggerOperation(Description = "This route is for updating event details. Only admins can access this route.")]
         [Authorize(Roles = "Admin")]
         [HttpPut]

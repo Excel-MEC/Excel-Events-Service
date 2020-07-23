@@ -1,6 +1,6 @@
 using System;
 
-namespace API.Dtos.Event
+namespace API.Dtos.Schedule
 {
     public class DataForAddingEventRoundDto
     {
