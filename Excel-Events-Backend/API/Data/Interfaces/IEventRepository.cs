@@ -11,7 +11,7 @@ namespace API.Data.Interfaces
         Task<List<EventForListViewDto>> EventListOfType(int id);
         Task<List<EventForListViewDto>> EventListOfCategory(int id);
         Task<EventForDetailedViewDto> GetEvent(int id);
-        Task<bool> AddRound(DataForAddingEventRoundDto data);   
+        Task<bool> AddRound(DataForAddingEventRoundDto newRound);   
         Task<bool> AddEvent(DataForAddingEventDto newEvent);
         Task<bool> UpdateEvent(DataForUpdatingEventDto newEvent);
         Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent);
