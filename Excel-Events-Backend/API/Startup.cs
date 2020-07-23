@@ -66,9 +66,8 @@ namespace API
         {
             app.Use(async (context, next) =>
             {
-                string SecretKey = context.Request.Headers["SecretKey"];
-                Console.WriteLine(SecretKey);
-                if (SecretKey == Environment.GetEnvironmentVariable("SECRET_KEY") && !string.IsNullOrEmpty(SecretKey))
+                string secretKey = context.Request.Headers["SecretKey"];
+                if (secretKey == Environment.GetEnvironmentVariable("SECRET_KEY") && !string.IsNullOrEmpty(secretKey))
                 {
                     await next();
                 }
