@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using API.Data.Interfaces;
 using API.Dtos.Schedule;
+using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,6 +56,21 @@ namespace API.Data
                 eventList.Add(eventForView);
             }
             return eventList;
+        }
+        public async Task<bool> AddRound(DataForAddingEventRoundDto dataFromClient)
+        {
+            var eventFromdb = await _context.Events.Include(e => e.Rounds).FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
+            var newRound = _mapper.Map<Schedule>(dataFromClient);
+            eventFromdb.Rounds.Add(newRound);
+            eventFromdb.NumberOfRounds += 1;
+            if (eventFromdb.NumberOfRounds == 1)
+            {
+                eventFromdb.Day = dataFromClient.Day;
+                eventFromdb.Datetime = dataFromClient.Datetime;
+            }
+            await _context.Rounds.AddAsync(newRound);
+            if (await _context.SaveChangesAsync() > 0) return true;
+            throw new Exception("Trouble saving new round. ");
         }
     }
 }
