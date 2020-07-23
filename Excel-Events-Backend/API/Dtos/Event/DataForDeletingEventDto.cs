@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace API.Dtos.Event
 {
     public class DataForDeletingEventDto

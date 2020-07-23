@@ -19,5 +19,9 @@ namespace API.Models.Custom
             "started",
             "finished"
         };
+
+        public static string[] EventRounds = {
+            "NA","prelims","mains","final"
+        };
     }
 }

@@ -34,5 +34,6 @@ namespace API.Models
         public ICollection<Registration> Registrations { get; set; }
         public ICollection<Bookmark> Bookmarks { get; set; }
         public bool? NeedRegistration { get; set; }
+        public ICollection<Schedule> Rounds { get; set; }
     }
 }

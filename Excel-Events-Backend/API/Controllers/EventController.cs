@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
-using API.Models;
 using API.Models.Custom;
 using API.Services.Interfaces;
 using AutoMapper;
@@ -13,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Events table.")]
+    [SwaggerTag("The routes under this controller are for performing CRUD operations on Events table.")]
     [Route("/events")]
     [ApiController]
     public class EventController : ControllerBase
@@ -67,9 +66,9 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Event>> GetEvent(int id)
+        public async Task<ActionResult<EventForDetailedViewDto>> GetEvent(int id)
         {
-            Event eventFromRepo = await _repo.GetEvent(id);
+            var eventFromRepo = await _repo.GetEvent(id);
             return Ok(eventFromRepo);
         }
 
@@ -84,6 +83,15 @@ namespace API.Controllers
             throw new Exception("Something went wrong");
         }
 
+        [SwaggerOperation(Description = " This route is for adding new round. ")]
+        [HttpPost]   
+        public async Task<ActionResult> AddRound(DataForAddingEventRoundDto data)
+        {    
+            var success =  await _repo.AddRound(data);
+            if(success) return Ok(new OkResponse { Response = "Success" });
+            throw new Exception("Problem in adding new round.");
+        }
+        
         [SwaggerOperation(Description = "This route is for updating event details. Only admins can access this route.")]
         [Authorize(Roles = "Admin")]
         [HttpPut]
