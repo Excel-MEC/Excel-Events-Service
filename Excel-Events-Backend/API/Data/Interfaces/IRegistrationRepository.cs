@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Dtos.Event;
-using API.Models;
 
 namespace API.Data.Interfaces
 {

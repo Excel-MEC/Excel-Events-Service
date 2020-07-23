@@ -61,25 +61,40 @@ namespace API.Data
             return events;
         }
 
-        public async Task<Event> GetEvent(int id)
+        public async Task<EventForDetailedViewDto> GetEvent(int id)
         {
-            Event eventFromdb = await _context.Events.Include(e => e.EventHead1).Include(e => e.EventHead2).FirstOrDefaultAsync(e => e.Id == id);
-            return eventFromdb;
+            Event eventFromdb = await _context.Events.Include(e => e.Rounds)
+                .Include(e => e.EventHead1).Include(e => e.EventHead2)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return _mapper.Map<EventForDetailedViewDto>(eventFromdb);
         }
 
         public async Task<bool> AddEvent(DataForAddingEventDto eventDataFromClient)
         {
             Event newEvent = _mapper.Map<Event>(eventDataFromClient);
             await _context.Events.AddAsync(newEvent);
+            if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem Saving Changes");
+            string imageUrl = await _service.UploadEventIcon(newEvent.Id.ToString(), eventDataFromClient.Icon);
+            newEvent.Icon = imageUrl;
             if (await _context.SaveChangesAsync() > 0)
+                return true;
+            throw new Exception("Trouble saving Image Name");
+        }
+        
+        public async Task<bool> AddRound(DataForAddingEventRoundDto dataFromClient)
+        {
+            var eventFromdb = await _context.Events.Include(e => e.Rounds).FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
+            var newRound = _mapper.Map<Schedule>(dataFromClient);
+            eventFromdb.Rounds.Add(newRound);
+            eventFromdb.NumberOfRounds += 1;
+            if (eventFromdb.NumberOfRounds == 1)
             {
-                string imageUrl = await _service.UploadEventIcon(newEvent.Id.ToString(), eventDataFromClient.Icon);
-                newEvent.Icon = imageUrl;
-                if (await _context.SaveChangesAsync() > 0)
-                    return true;
-                throw new Exception("Trouble saveing Image Name");
+                eventFromdb.Day = dataFromClient.Day;
+                eventFromdb.Datetime = dataFromClient.Datetime;
             }
-            throw new Exception("Problem Saving Changes");
+            await _context.Rounds.AddAsync(newRound);
+            if (await _context.SaveChangesAsync() > 0) return true;
+            throw new Exception("Trouble saving new round. ");
         }
         public async Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
@@ -91,7 +106,7 @@ namespace API.Data
                 bool success = await _context.SaveChangesAsync() > 0;
                 return success;
             }
-            throw new Exception("Id and Name doesnot match");
+            throw new Exception("Id and Name does not match");
         }
 
         public async Task<bool> UpdateEvent(DataForUpdatingEventDto eventDataFromClient)

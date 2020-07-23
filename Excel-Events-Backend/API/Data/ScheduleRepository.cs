@@ -2,12 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using API.Data.Interfaces;
-using API.Dtos.Event;
 using API.Dtos.Schedule;
-using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace API.Data
 {
@@ -20,34 +17,41 @@ namespace API.Data
             _mapper = mapper;
             _context = context;
         }
-
-        public async Task<List<EventForScheduleListViewDto>> EventList()
+        public async Task<List<EventForScheduleListViewDto>> ScheduleList()
         {
             List<EventForScheduleListViewDto> eventForScheduleList = new List<EventForScheduleListViewDto>();
-            var query = await _context.Events.ToListAsync();
-            var events = query.GroupBy(x => x.Day)
+            var eventList = await _context.Rounds.Include(r => r.Event).Select(q => _mapper.Map<EventRoundForScheduleViewDto>(q)).ToListAsync();
+            var events = eventList.GroupBy(x => x.Day)
                               .Select(g => new { g.Key, Events = g.OrderBy(x => x.Datetime).ToList() })
                               .OrderBy(x => x.Key)
                               .ToList();
             foreach (var group in events)
-            {    
-                EventForScheduleListViewDto eventForSchedule = new EventForScheduleListViewDto();
-                var eventList = Map(group.Events);
-                eventForSchedule.Day = group.Key; 
-                eventForSchedule.Events = eventList;
+            {
+                var eventForSchedule = new EventForScheduleListViewDto();
+                var eventListForView = Map(group.Events);
+                eventForSchedule.Day = group.Key;
+                eventForSchedule.Events = eventListForView;
                 eventForScheduleList.Add(eventForSchedule);
             }
             return eventForScheduleList;
         }
-
-        private List<EventForListViewDto> Map(List<Event> events)
+        private List<EventForScheduleViewDto> Map(List<EventRoundForScheduleViewDto> events)
         {
-            List<EventForListViewDto> eventList = new List<EventForListViewDto>();
+            var eventList = new List<EventForScheduleViewDto>();
             foreach (var e in events)
             {
-
-                var newEvent = _mapper.Map<EventForListViewDto>(e);
-                eventList.Add(newEvent);
+                var eventForView = new EventForScheduleViewDto
+                {
+                    Id = e.Event.Id,
+                    Name = e.Event.Name,
+                    Icon = e.Event.Icon,
+                    EventType = e.Event.EventType,
+                    Category = e.Event.Category,
+                    Round = e.Round,
+                    Datetime = e.Datetime,
+                    Day = e.Day
+                };
+                eventList.Add(eventForView);
             }
             return eventList;
         }

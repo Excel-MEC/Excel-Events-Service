@@ -44,7 +44,7 @@ namespace API.Models.FluentApi
 
             modelBuilder.Entity<Event>()
                 .Property(e => e.NumberOfRounds)
-                .HasDefaultValue(null);
+                .HasDefaultValue(0);
 
             modelBuilder.Entity<Event>()
                 .Property(e => e.CurrentRound)

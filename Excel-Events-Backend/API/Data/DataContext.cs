@@ -12,13 +12,15 @@ namespace API.Data
         {
             modelBuilder.AddEventModelConfig();
             modelBuilder.AddRegistrationModelConfig();
-            modelBuilder.AddBookmarkModelConfig();
+            modelBuilder.AddBookmarkModelConfig();            
+            modelBuilder.AddScheduleModelConfig();            
         }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventHead> EventHeads { get; set; }
         public DbSet<Highlight> Highlights { get; set; }
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Bookmark> Bookmarks { get; set; }
+        public DbSet<Schedule> Rounds { get; set; }
     }
 
 }

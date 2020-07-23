@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for perfoming CRUD operations on Bookmarks table.")]
+    [SwaggerTag("The routes under this controller are for performing CRUD operations on Bookmarks table.")]
     [Authorize]
     [Route("/bookmark")]    
     [ApiController]
