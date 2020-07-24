@@ -12,7 +12,7 @@ namespace API.Helpers
         {
             AllowNullDestinationValues = true;
             CreateMap<DataForAddingEventDto, Event>();
-            CreateMap<DataForAddingEventRoundDto, Schedule>();
+            CreateMap<DataForScheduleDto, Schedule>();
             CreateMap<Event, EventForListViewDto>();
             CreateMap<DataForUpdatingEventDto, Event>()
                 .ForMember(dest => dest.Icon, opt => opt.Ignore());
