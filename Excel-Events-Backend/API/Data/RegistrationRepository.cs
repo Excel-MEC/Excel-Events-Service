@@ -40,22 +40,19 @@ namespace API.Data
             return eventList;
         }
 
-        // marks the bookmarked event as registered upon registration of that event.
-        private async Task<bool> HasBookmarked(int excelId, int eventId)
+        private async Task<bool> UpdateBookmark(int excelId, int eventId)
         {
             var fav = await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
-            if (fav != null)
-            {
-                fav.IsRegistered = true;
-            }
-            return false;
+            if (fav == null) return false;
+            fav.IsRegistered = true;
+            if(await _context.SaveChangesAsync() <= 0) throw new Exception("Problem saving changes");
+            return true;
         }
 
         public async Task<bool> HasRegistered(int excelId, int eventId)
         {
             var success = await _context.Registrations.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
-            if (success != null) return true;
-            return false;
+            return success != null;
         }
 
         public async Task<bool> Register(int excelId, int eventId)
@@ -65,8 +62,8 @@ namespace API.Data
             var user = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(user);
             var success = await _context.SaveChangesAsync() > 0;
-            var hasChanged = await HasBookmarked(excelId, eventId);
-            return success;
+            if(success) return await UpdateBookmark(excelId, eventId);
+            throw new Exception("Problem saving changes");
         }
 
         public async Task<List<int>> UserList(int eventId)

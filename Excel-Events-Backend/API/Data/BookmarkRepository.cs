@@ -23,12 +23,12 @@ namespace API.Data
 
         public async Task<bool> Add(int excelId, int eventId)
         {
-            Bookmark fav = new Bookmark();
-            fav.ExcelId = excelId;
-            fav.EventId = eventId;
-            fav.IsRegistered = await _repo.HasRegistered(excelId, eventId);
-            _context.Bookmarks.Add(fav);
-            bool success = await _context.SaveChangesAsync() > 0;
+            var fav = new Bookmark
+            {
+                ExcelId = excelId, EventId = eventId, IsRegistered = await _repo.HasRegistered(excelId, eventId)
+            };
+            await _context.Bookmarks.AddAsync(fav);
+            var success = await _context.SaveChangesAsync() > 0;
             return success;
         }
 
