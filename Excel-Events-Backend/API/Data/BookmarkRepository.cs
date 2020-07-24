@@ -37,7 +37,9 @@ namespace API.Data
 
         public async Task<List<EventForBookmarkListViewDto>> EventList(int excelId)
         {
-            var registrations = await _context.Bookmarks.Where(r => r.ExcelId == excelId).Include(x => x.Event).ToListAsync();
+            var registrations = await _context.Bookmarks.Where(r => r.ExcelId == excelId)
+                .Include(x => x.Event)
+                .ToListAsync();
             return registrations.Select(x => _mapper.Map<EventForBookmarkListViewDto>(x.Event)).ToList();
         }
 

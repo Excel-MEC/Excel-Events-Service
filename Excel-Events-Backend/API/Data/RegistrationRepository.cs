@@ -22,7 +22,7 @@ namespace API.Data
 
         public async Task<bool> ClearUserData(int excelId)
         {
-            List<Registration> registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
+            var registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
             _context.RemoveRange(registeredEventList);
             var success = await _context.SaveChangesAsync() > 0;
             return success;
@@ -30,14 +30,10 @@ namespace API.Data
 
         public async Task<List<EventForListViewDto>> EventList(int excelId)
         {
-            List<Registration> registrations = await _context.Registrations.Where(r => r.ExcelId == excelId).Include(x => x.Event).ToListAsync();
-            List<EventForListViewDto> eventList = new List<EventForListViewDto>();
-            foreach (var x in registrations)
-            {
-                var eventForView = _mapper.Map<EventForListViewDto>(x.Event);
-                eventList.Add(eventForView);
-            }
-            return eventList;
+            var registrations = await _context.Registrations.Where(r => r.ExcelId == excelId)
+                .Include(x => x.Event)
+                .ToListAsync();
+            return registrations.Select(x => _mapper.Map<EventForListViewDto>(x.Event)).ToList();
         }
 
         public async Task<bool> HasRegistered(int excelId, int eventId)
