@@ -46,10 +46,7 @@ namespace API.Data
         }
         private static List<EventForScheduleViewDto> Map(List<EventRoundForScheduleViewDto> events)
         {
-            var eventList = new List<EventForScheduleViewDto>();
-            foreach (var e in events)
-            {
-                var eventForView = new EventForScheduleViewDto
+            return events.Select(e => new EventForScheduleViewDto
                 {
                     Id = e.Event.Id,
                     Name = e.Event.Name,
@@ -59,10 +56,8 @@ namespace API.Data
                     Round = e.Round,
                     Datetime = e.Datetime,
                     Day = e.Day
-                };
-                eventList.Add(eventForView);
-            }
-            return eventList;
+                })
+                .ToList();
         }
         public async Task<bool> AddRound(DataForAddingEventRoundDto dataFromClient)
         {
