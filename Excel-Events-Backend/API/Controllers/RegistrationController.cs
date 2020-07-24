@@ -28,7 +28,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> Register(DataFromClientDto data)
         {
-            int excelId = int.Parse(this.User.Claims.First(i => i.Type == "user_id").Value);
+            var excelId = int.Parse(this.User.Claims.First(i => i.Type == "user_id").Value);
             var success = await _repo.Register(excelId, data.Id);
             if(success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Problem registering user");
@@ -48,25 +48,23 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> EventList()
         {
-            int id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
-            var list = await _repo.EventList(id);
-            return list;
+            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            return Ok(await _repo.EventList(id));
         }
 
         [Authorize(Roles = "Admin")]
         [SwaggerOperation(Description = " This route is used to return a list of users,registered for an event. Only admins can access this route. ")]
         [HttpGet("{eventId}/users")]
-        public async Task<ActionResult<List<int>>> UserList(string eventId)
+        public ActionResult<List<int>> UserList(string eventId)
         {
-            var list = await _repo.UserList(int.Parse(eventId));
-            return list;
+            return Ok(_repo.UserList(int.Parse(eventId)));
         }
 
         [SwaggerOperation(Description = " This route is used to check whether a user has registered for an event or not. ")]
         [HttpGet("{eventId}")]
         public async Task<ActionResult<bool>> HasRegistered(string eventId)
         {
-            int excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
             var success = await _repo.HasRegistered(excelId, int.Parse(eventId));
             return Ok(success);
         }

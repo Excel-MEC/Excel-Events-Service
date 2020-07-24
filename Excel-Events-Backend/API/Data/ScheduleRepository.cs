@@ -21,12 +21,19 @@ namespace API.Data
         }
         public async Task<List<EventForScheduleListViewDto>> ScheduleList()
         {
-            List<EventForScheduleListViewDto> eventForScheduleList = new List<EventForScheduleListViewDto>();
-            var eventList = await _context.Rounds.Include(r => r.Event).Select(q => _mapper.Map<EventRoundForScheduleViewDto>(q)).ToListAsync();
+            var eventForScheduleList = new List<EventForScheduleListViewDto>();
+            var eventList = await _context.Rounds.Include(r => r.Event)
+                .Select(q => _mapper.Map<EventRoundForScheduleViewDto>(q))
+                .ToListAsync();
             var events = eventList.GroupBy(x => x.Day)
-                              .Select(g => new { g.Key, Events = g.OrderBy(x => x.Datetime).ToList() })
-                              .OrderBy(x => x.Key)
-                              .ToList();
+                .Select(g => new
+                {
+                    g.Key,
+                    Events = g.OrderBy(x => x.Datetime)
+                        .ToList()
+                })
+                .OrderBy(x => x.Key)
+                .ToList();
             foreach (var group in events)
             {
                 var eventForSchedule = new EventForScheduleListViewDto();
@@ -37,12 +44,9 @@ namespace API.Data
             }
             return eventForScheduleList;
         }
-        private List<EventForScheduleViewDto> Map(List<EventRoundForScheduleViewDto> events)
+        private static List<EventForScheduleViewDto> Map(List<EventRoundForScheduleViewDto> events)
         {
-            var eventList = new List<EventForScheduleViewDto>();
-            foreach (var e in events)
-            {
-                var eventForView = new EventForScheduleViewDto
+            return events.Select(e => new EventForScheduleViewDto
                 {
                     Id = e.Event.Id,
                     Name = e.Event.Name,
@@ -52,14 +56,13 @@ namespace API.Data
                     Round = e.Round,
                     Datetime = e.Datetime,
                     Day = e.Day
-                };
-                eventList.Add(eventForView);
-            }
-            return eventList;
+                })
+                .ToList();
         }
         public async Task<bool> AddRound(DataForAddingEventRoundDto dataFromClient)
         {
-            var eventFromdb = await _context.Events.Include(e => e.Rounds).FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
+            var eventFromdb = await _context.Events.Include(e => e.Rounds)
+                .FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
             var newRound = _mapper.Map<Schedule>(dataFromClient);
             eventFromdb.Rounds.Add(newRound);
             eventFromdb.NumberOfRounds += 1;

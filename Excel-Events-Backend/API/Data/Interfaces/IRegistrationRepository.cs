@@ -9,7 +9,7 @@ namespace API.Data.Interfaces
         Task<bool> Register(int excelId, int eventId);
         Task<bool> ClearUserData(int excelId);
         Task<List<EventForListViewDto>> EventList(int excelId);
-        Task<List<int>> UserList(int eventId);
+        List<int> UserList(int eventId);
         Task<bool> HasRegistered(int excelId, int eventId);
     }
 }

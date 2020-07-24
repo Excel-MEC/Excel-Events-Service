@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,26 +24,23 @@ namespace API.Data
 
         public async Task<bool> Add(int excelId, int eventId)
         {
-            Bookmark fav = new Bookmark();
-            fav.ExcelId = excelId;
-            fav.EventId = eventId;
-            fav.IsRegistered = await _repo.HasRegistered(excelId, eventId);
-            _context.Bookmarks.Add(fav);
-            bool success = await _context.SaveChangesAsync() > 0;
+            if( await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId) != null)
+                throw new Exception(" Event is already in bookmarks. ");
+            var favorite = new Bookmark
+            {
+                ExcelId = excelId, EventId = eventId
+            };
+            await _context.Bookmarks.AddAsync(favorite);
+            var success = await _context.SaveChangesAsync() > 0;
             return success;
         }
 
         public async Task<List<EventForBookmarkListViewDto>> EventList(int excelId)
         {
-            List<Bookmark> registrations = await _context.Bookmarks.Where(r => r.ExcelId == excelId).Include(x => x.Event).ToListAsync();
-            List<EventForBookmarkListViewDto> eventList = new List<EventForBookmarkListViewDto>();
-            foreach (var x in registrations)
-            {
-                var eventForView = _mapper.Map<EventForBookmarkListViewDto>(x.Event);
-                eventForView.IsRegistered = x.IsRegistered;
-                eventList.Add(eventForView);
-            }
-            return eventList;
+            var registrations = await _context.Bookmarks.Where(r => r.ExcelId == excelId)
+                .Include(x => x.Event)
+                .ToListAsync();
+            return registrations.Select(x => _mapper.Map<EventForBookmarkListViewDto>(x.Event)).ToList();
         }
 
         public async Task<bool> Remove(int excelId, int eventId)
@@ -55,7 +53,7 @@ namespace API.Data
 
         public async Task<bool> RemoveAll(int excelId)
         {
-            List<Bookmark> bookmarks = await _context.Bookmarks.Where(r => r.ExcelId == excelId).ToListAsync();
+            var bookmarks = await _context.Bookmarks.Where(r => r.ExcelId == excelId).ToListAsync();
             _context.RemoveRange(bookmarks);
             var success = await _context.SaveChangesAsync() > 0;
             return success;

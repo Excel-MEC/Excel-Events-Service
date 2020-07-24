@@ -25,45 +25,30 @@ namespace API.Data
 
         public async Task<List<EventForListViewDto>> EventList()
         {
-            List<EventForListViewDto> events = await _context.Events.Select(e => _mapper.Map<EventForListViewDto>(e)).ToListAsync();
+            var events = await _context.Events.Select(e => _mapper.Map<EventForListViewDto>(e)).ToListAsync();
             return events;
         }
 
         public async Task<List<EventForListViewDto>> FilteredList(int eventTypeId, int categoryId)
         {
-            List<Event> filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId && e.CategoryId == categoryId).ToListAsync();
-            List<EventForListViewDto> events = new List<EventForListViewDto>();
-            foreach (var e in filteredEvents)
-            {
-                events.Add(_mapper.Map<EventForListViewDto>(e));
-            }
-            return events;
+            var filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId && e.CategoryId == categoryId).ToListAsync();
+            return filteredEvents.Select(e => _mapper.Map<EventForListViewDto>(e)).ToList();
         }
 
         public async Task<List<EventForListViewDto>> EventListOfType(int eventTypeId)
         {
-            List<Event> filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId).ToListAsync();
-            List<EventForListViewDto> events = new List<EventForListViewDto>();
-            foreach (var e in filteredEvents)
-            {
-                events.Add(_mapper.Map<EventForListViewDto>(e));
-            }
-            return events;
+            var filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId).ToListAsync();
+            return filteredEvents.Select(e => _mapper.Map<EventForListViewDto>(e)).ToList();
         }
         public async Task<List<EventForListViewDto>> EventListOfCategory(int categoryId)
         {
-            List<Event> filteredEvents = await _context.Events.Where(e => e.CategoryId == categoryId).ToListAsync();
-            List<EventForListViewDto> events = new List<EventForListViewDto>();
-            foreach (var e in filteredEvents)
-            {
-                events.Add(_mapper.Map<EventForListViewDto>(e));
-            }
-            return events;
+            var filteredEvents = await _context.Events.Where(e => e.CategoryId == categoryId).ToListAsync();
+            return filteredEvents.Select(e => _mapper.Map<EventForListViewDto>(e)).ToList();
         }
 
         public async Task<EventForDetailedViewDto> GetEvent(int id)
         {
-            Event eventFromdb = await _context.Events.Include(e => e.Rounds)
+            var eventFromdb = await _context.Events.Include(e => e.Rounds)
                 .Include(e => e.EventHead1).Include(e => e.EventHead2)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return _mapper.Map<EventForDetailedViewDto>(eventFromdb);
@@ -71,50 +56,41 @@ namespace API.Data
 
         public async Task<bool> AddEvent(DataForAddingEventDto eventDataFromClient)
         {
-            Event newEvent = _mapper.Map<Event>(eventDataFromClient);
+            var newEvent = _mapper.Map<Event>(eventDataFromClient);
             await _context.Events.AddAsync(newEvent);
             if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem Saving Changes");
-            string imageUrl = await _service.UploadEventIcon(newEvent.Id.ToString(), eventDataFromClient.Icon);
+            var imageUrl = await _service.UploadEventIcon(newEvent.Id.ToString(), eventDataFromClient.Icon);
             newEvent.Icon = imageUrl;
-            if (await _context.SaveChangesAsync() > 0)
-                return true;
+            if (await _context.SaveChangesAsync() > 0) return true;
             throw new Exception("Trouble saving Image Name");
         }
         
         public async Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
-            Event eventToDelete = await _context.Events.FindAsync(dataForDeletingEvent.Id);
-            if (eventToDelete.Name == dataForDeletingEvent.Name)
-            {
-                await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
-                _context.Events.Remove(await _context.Events.FindAsync(dataForDeletingEvent.Id));
-                bool success = await _context.SaveChangesAsync() > 0;
-                return success;
-            }
-            throw new Exception("Id and Name does not match");
+            var eventToDelete = await _context.Events.FindAsync(dataForDeletingEvent.Id);
+            if (eventToDelete.Name != dataForDeletingEvent.Name) throw new Exception("Id and Name does not match");
+            await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
+            _context.Events.Remove(await _context.Events.FindAsync(dataForDeletingEvent.Id));
+            return  await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> UpdateEvent(DataForUpdatingEventDto eventDataFromClient)
         {
-            Event eventFromDb = await _context.Events.FindAsync(eventDataFromClient.Id);
-            Event eventForUpdate = _mapper.Map<Event>(eventDataFromClient);
+            var eventFromDb = await _context.Events.FindAsync(eventDataFromClient.Id);
+            var eventForUpdate = _mapper.Map<Event>(eventDataFromClient);
             if (eventDataFromClient.Icon != null)
             {
                 await _service.DeleteEventIcon(eventFromDb.Id, eventFromDb.Icon);
-                string imageUrl = await _service.UploadEventIcon(eventDataFromClient.Id.ToString(), eventDataFromClient.Icon);
-                if (!eventFromDb.Icon.Equals(imageUrl))
-                    eventForUpdate.Icon = imageUrl;
-                else
-                    eventForUpdate.Icon = eventFromDb.Icon;
+                var imageUrl = await _service.UploadEventIcon(eventDataFromClient.Id.ToString(), eventDataFromClient.Icon);
+                eventForUpdate.Icon = !eventFromDb.Icon.Equals(imageUrl) ? imageUrl : eventFromDb.Icon;
             }
             else
                 eventForUpdate.Icon = eventFromDb.Icon;
-
             CopyChanges(eventForUpdate, eventFromDb);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
-        private void CopyChanges(Event src, Event dest)
+        private static void CopyChanges(Event src, Event dest)
         {
             dest.Icon = src.Icon;
             dest.CategoryId = src.CategoryId;
