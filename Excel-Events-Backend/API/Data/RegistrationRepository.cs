@@ -43,7 +43,7 @@ namespace API.Data
         private async Task<bool> UpdateBookmark(int excelId, int eventId)
         {
             var fav = await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
-            if (fav == null) return false;
+            if (fav == null) return true;
             fav.IsRegistered = true;
             if(await _context.SaveChangesAsync() <= 0) throw new Exception("Problem saving changes");
             return true;
@@ -57,8 +57,8 @@ namespace API.Data
 
         public async Task<bool> Register(int excelId, int eventId)
         {
+            if(await HasRegistered(excelId,eventId)) throw new Exception("Already registered for the event.");
             var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
-            if (!(bool) eventToRegister.NeedRegistration) throw new Exception("This event need no registration.");
             var user = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(user);
             var success = await _context.SaveChangesAsync() > 0;

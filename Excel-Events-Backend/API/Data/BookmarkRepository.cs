@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,11 +24,13 @@ namespace API.Data
 
         public async Task<bool> Add(int excelId, int eventId)
         {
-            var fav = new Bookmark
+            if( await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId) != null)
+                throw new Exception(" Event is already in bookmarks. ");
+            var favorite = new Bookmark
             {
                 ExcelId = excelId, EventId = eventId, IsRegistered = await _repo.HasRegistered(excelId, eventId)
             };
-            await _context.Bookmarks.AddAsync(fav);
+            await _context.Bookmarks.AddAsync(favorite);
             var success = await _context.SaveChangesAsync() > 0;
             return success;
         }
