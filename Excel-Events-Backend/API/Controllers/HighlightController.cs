@@ -33,7 +33,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Highlight>>> Get()
         {
-            List<Highlight> events = await _repo.GetHighlights();
+            var events = await _repo.GetHighlights();
             return Ok(events);
         }
         
@@ -42,9 +42,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<OkResponse>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
         {
-            bool success = await _repo.AddHighlight(dataForAddingHighlight);
-            if (success)
-                return Ok(new OkResponse { Response = "Success" });
+            var success = await _repo.AddHighlight(dataForAddingHighlight);
+            if (success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Failed to Add Highlight");
         }
 
@@ -53,9 +52,8 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<ActionResult<OkResponse>> Delete(DataForDeletingHighlightDto dataForDeletingHighlight)
         {
-            bool success = await _repo.DeleteHighlight(dataForDeletingHighlight);
-            if (success)
-                return Ok(new OkResponse { Response = "Success" });
+            var success = await _repo.DeleteHighlight(dataForDeletingHighlight);
+            if (success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Error deleting the Highlight");
         }
     }

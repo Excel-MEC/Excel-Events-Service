@@ -40,7 +40,7 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<ActionResult> RemoveAll()
         {
-            int id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
             var success = await _repo.RemoveAll(id);
             if(success) return Ok(new OkResponse { Response = "Success"});
             throw new Exception("Problem clearing bookmarks. Check out the userid");
@@ -50,16 +50,15 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EventForBookmarkListViewDto>>> EventList()
         {
-            int id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
-            var list = await _repo.EventList(id);
-            return list;
+            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            return Ok(await _repo.EventList(id));
         }
 
         [SwaggerOperation(Description = " This route is to remove a bookmarked event by the user. ")]
         [HttpDelete("{eventId}")]
         public async Task<ActionResult<List<int>>> Remove(string eventId)
         {
-            int excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
             var success = await _repo.Remove(excelId, int.Parse(eventId));
             if(success) return Ok(new OkResponse { Response = "Success"});
             throw new Exception("Problem removing the bookmarked event");

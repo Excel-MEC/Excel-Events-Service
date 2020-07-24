@@ -28,7 +28,7 @@ namespace API.Data
                 throw new Exception(" Event is already in bookmarks. ");
             var favorite = new Bookmark
             {
-                ExcelId = excelId, EventId = eventId, IsRegistered = await _repo.HasRegistered(excelId, eventId)
+                ExcelId = excelId, EventId = eventId
             };
             await _context.Bookmarks.AddAsync(favorite);
             var success = await _context.SaveChangesAsync() > 0;
@@ -37,15 +37,8 @@ namespace API.Data
 
         public async Task<List<EventForBookmarkListViewDto>> EventList(int excelId)
         {
-            List<Bookmark> registrations = await _context.Bookmarks.Where(r => r.ExcelId == excelId).Include(x => x.Event).ToListAsync();
-            List<EventForBookmarkListViewDto> eventList = new List<EventForBookmarkListViewDto>();
-            foreach (var x in registrations)
-            {
-                var eventForView = _mapper.Map<EventForBookmarkListViewDto>(x.Event);
-                eventForView.IsRegistered = x.IsRegistered;
-                eventList.Add(eventForView);
-            }
-            return eventList;
+            var registrations = await _context.Bookmarks.Where(r => r.ExcelId == excelId).Include(x => x.Event).ToListAsync();
+            return registrations.Select(x => _mapper.Map<EventForBookmarkListViewDto>(x.Event)).ToList();
         }
 
         public async Task<bool> Remove(int excelId, int eventId)
@@ -58,7 +51,7 @@ namespace API.Data
 
         public async Task<bool> RemoveAll(int excelId)
         {
-            List<Bookmark> bookmarks = await _context.Bookmarks.Where(r => r.ExcelId == excelId).ToListAsync();
+            var bookmarks = await _context.Bookmarks.Where(r => r.ExcelId == excelId).ToListAsync();
             _context.RemoveRange(bookmarks);
             var success = await _context.SaveChangesAsync() > 0;
             return success;

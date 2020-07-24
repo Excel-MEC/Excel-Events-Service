@@ -21,34 +21,29 @@ namespace API.Data
 
         public async Task<bool> AddHighlight(DataForAddingHighlightDto dataForAddingHighlight)
         {
-            Highlight newHighlight = new Highlight();
-            newHighlight.Name = dataForAddingHighlight.Name;
-            _context.Highlights.Add(newHighlight);
+            var newHighlight = new Highlight {Name = dataForAddingHighlight.Name};
+            await _context.Highlights.AddAsync(newHighlight);
             await _context.SaveChangesAsync();
-            string imageUrl = await _service.UploadHighlightImage(newHighlight.Id.ToString(), dataForAddingHighlight.Image);
+            var imageUrl = await _service.UploadHighlightImage(newHighlight.Id.ToString(), dataForAddingHighlight.Image);
             newHighlight.Image = imageUrl;
-            bool success = await _context.SaveChangesAsync() > 0;
-            return success;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<List<Highlight>> GetHighlights()
         {
-            List<Highlight> highlights = await _context.Highlights.ToListAsync();
+            var highlights = await _context.Highlights.ToListAsync();
             return highlights;
         }
 
         public async Task<bool> DeleteHighlight(DataForDeletingHighlightDto dataForDeletingHighlight)
         {
-            Highlight highlightToRemove = await _context.Highlights.FindAsync(dataForDeletingHighlight.Id);
-            if (highlightToRemove.Name == dataForDeletingHighlight.Name)
-            {
-                string imageUrl = highlightToRemove.Image;
-                await _service.DeleteHighlightImage(highlightToRemove.Id, imageUrl);
-                _context.Highlights.Remove(highlightToRemove);
-                bool success = await _context.SaveChangesAsync() > 0;
-                return success;
-            }
-            throw new System.Exception("Name and Id doesnot match");
+            var highlightToRemove = await _context.Highlights.FindAsync(dataForDeletingHighlight.Id);
+            if (highlightToRemove.Name != dataForDeletingHighlight.Name)
+                throw new System.Exception("Name and Id does not match");
+            var imageUrl = highlightToRemove.Image;
+            await _service.DeleteHighlightImage(highlightToRemove.Id, imageUrl);
+            _context.Highlights.Remove(highlightToRemove);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

@@ -40,15 +40,6 @@ namespace API.Data
             return eventList;
         }
 
-        private async Task<bool> UpdateBookmark(int excelId, int eventId)
-        {
-            var fav = await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
-            if (fav == null) return true;
-            fav.IsRegistered = true;
-            if(await _context.SaveChangesAsync() <= 0) throw new Exception("Problem saving changes");
-            return true;
-        }
-
         public async Task<bool> HasRegistered(int excelId, int eventId)
         {
             var success = await _context.Registrations.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
@@ -61,20 +52,14 @@ namespace API.Data
             var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
             var user = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(user);
-            var success = await _context.SaveChangesAsync() > 0;
-            if(success) return await UpdateBookmark(excelId, eventId);
-            throw new Exception("Problem saving changes");
+            if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem saving changes");
+            return true;
         }
 
-        public async Task<List<int>> UserList(int eventId)
+        public List<int> UserList(int eventId)
         {
-            var e = await _context.Events.Include(x => x.Registrations).FirstOrDefaultAsync(x => x.Id == eventId);
-            List<int> userList = new List<int>();
-            foreach (var x in e.Registrations)
-            {
-                userList.Add(x.ExcelId);
-            }
-            return userList;
+            var registrations =  _context.Registrations.Where(x => x.EventId == eventId);
+            return registrations.Select(x => x.ExcelId).ToList();
         }
     }
 }

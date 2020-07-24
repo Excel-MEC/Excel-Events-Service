@@ -32,7 +32,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> Get()
         {
-            List<EventForListViewDto> events = await _repo.EventList();
+            var events = await _repo.EventList();
             return Ok(events);
         }
 
@@ -43,7 +43,7 @@ namespace API.Controllers
             int eventTypeId, categoryId;
             eventTypeId = Array.IndexOf(Constants.EventType, eventType);
             categoryId = Array.IndexOf(Constants.Category, category);
-            List<EventForListViewDto> filteredEvents = await _repo.FilteredList(eventTypeId, categoryId);
+            var filteredEvents = await _repo.FilteredList(eventTypeId, categoryId);
             return Ok(filteredEvents);
         }
 
@@ -51,8 +51,8 @@ namespace API.Controllers
         [HttpGet("type/{event_type}")]
         public async Task<ActionResult> GetEventsOfType(string event_type)
         {
-            int eventTypeId = Array.IndexOf(Constants.EventType, event_type);
-            List<EventForListViewDto> filteredEvents = await _repo.EventListOfType(eventTypeId);
+            var eventTypeId = Array.IndexOf(Constants.EventType, event_type);
+            var filteredEvents = await _repo.EventListOfType(eventTypeId);
             return Ok(filteredEvents);
         }
 
@@ -60,8 +60,8 @@ namespace API.Controllers
         [HttpGet("category/{category}")]
         public async Task<ActionResult> GetEventsOfCategory(string category)
         {
-            int categoryId = Array.IndexOf(Constants.EventType, category);
-            List<EventForListViewDto> filteredEvents = await _repo.EventListOfCategory(categoryId);
+            var categoryId = Array.IndexOf(Constants.EventType, category);
+            var filteredEvents = await _repo.EventListOfCategory(categoryId);
             return Ok(filteredEvents);
         }
 
@@ -77,9 +77,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
         {
-            bool success = await _repo.AddEvent(eventDataFromClient);
-            if (success)
-                return Ok(new OkResponse { Response = "Success" });
+            var success = await _repo.AddEvent(eventDataFromClient);
+            if (success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Something went wrong");
         }
        
@@ -88,9 +87,8 @@ namespace API.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
         {
-            bool success = await _repo.UpdateEvent(eventDataFromClient);
-            if (success)
-                return Ok(new OkResponse { Response = "Success" });
+            var success = await _repo.UpdateEvent(eventDataFromClient);
+            if (success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Something went wrong");
         }
 
@@ -99,9 +97,8 @@ namespace API.Controllers
         [HttpDelete]    
         public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
-            bool success = await _repo.DeleteEvent(dataForDeletingEvent);
-            if (success)
-                return Ok(new OkResponse { Response = "Success" });
+            var success = await _repo.DeleteEvent(dataForDeletingEvent);
+            if (success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Error Deleting Event");
         }
 
