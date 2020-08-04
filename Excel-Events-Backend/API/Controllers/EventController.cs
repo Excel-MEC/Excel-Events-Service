@@ -18,14 +18,10 @@ namespace API.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventRepository _repo;
-        private readonly IMapper _mapper;
-        private readonly IEventService _service;
 
-        public EventController(IEventRepository repo, IMapper mapper, IEventService service)
+        public EventController(IEventRepository repo)
         {
             _repo = repo;
-            _mapper = mapper;
-            _service = service;
         }
 
         [SwaggerOperation(Description = " This route returns a list of all the events. ")]
@@ -34,42 +30,6 @@ namespace API.Controllers
         {
             var events = await _repo.EventList();
             return Ok(events);
-        }
-
-        [SwaggerOperation(Description = " This route returns all the events that matches the applied filters. ")]
-        [HttpGet("event_type={eventType}&category={category}")]
-        public async Task<ActionResult> FilteredList(string eventType, string category)
-        {
-            int eventTypeId, categoryId;
-            eventTypeId = Array.IndexOf(Constants.EventType, eventType);
-            categoryId = Array.IndexOf(Constants.Category, category);
-            var filteredEvents = await _repo.FilteredList(eventTypeId, categoryId);
-            return Ok(filteredEvents);
-        }
-
-        [SwaggerOperation(Description = " This route returns all the events that matches the given event type.")]
-        [HttpGet("type/{event_type}")]
-        public async Task<ActionResult> GetEventsOfType(string event_type)
-        {
-            var eventTypeId = Array.IndexOf(Constants.EventType, event_type);
-            var filteredEvents = await _repo.EventListOfType(eventTypeId);
-            return Ok(filteredEvents);
-        }
-
-        [SwaggerOperation(Description = "This route returns all the events that matches the given event category. ")]
-        [HttpGet("category/{category}")]
-        public async Task<ActionResult> GetEventsOfCategory(string category)
-        {
-            var categoryId = Array.IndexOf(Constants.EventType, category);
-            var filteredEvents = await _repo.EventListOfCategory(categoryId);
-            return Ok(filteredEvents);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EventForDetailedViewDto>> GetEvent(int id)
-        {
-            var eventFromRepo = await _repo.GetEvent(id);
-            return Ok(eventFromRepo);
         }
 
         [SwaggerOperation(Description = " This route is for adding new events. Only admins can access this route. ")]
@@ -102,5 +62,40 @@ namespace API.Controllers
             throw new Exception("Error Deleting Event");
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EventForDetailedViewDto>> GetEvent(int id)
+        {
+            var eventFromRepo = await _repo.GetEvent(id);
+            return Ok(eventFromRepo);
+        }
+        
+        [SwaggerOperation(Description = " This route returns all the events that matches the applied filters. ")]
+        [HttpGet("event_type={eventType}&category={category}")]
+        public async Task<ActionResult> FilteredList(string eventType, string category)
+        {
+            int eventTypeId, categoryId;
+            eventTypeId = Array.IndexOf(Constants.EventType, eventType);
+            categoryId = Array.IndexOf(Constants.Category, category);
+            var filteredEvents = await _repo.FilteredList(eventTypeId, categoryId);
+            return Ok(filteredEvents);
+        }
+
+        [SwaggerOperation(Description = " This route returns all the events that matches the given event type.")]
+        [HttpGet("type/{event_type}")]
+        public async Task<ActionResult> GetEventsOfType(string event_type)
+        {
+            var eventTypeId = Array.IndexOf(Constants.EventType, event_type);
+            var filteredEvents = await _repo.EventListOfType(eventTypeId);
+            return Ok(filteredEvents);
+        }
+
+        [SwaggerOperation(Description = "This route returns all the events that matches the given event category. ")]
+        [HttpGet("category/{category}")]
+        public async Task<ActionResult> GetEventsOfCategory(string category)
+        {
+            var categoryId = Array.IndexOf(Constants.EventType, category);
+            var filteredEvents = await _repo.EventListOfCategory(categoryId);
+            return Ok(filteredEvents);
+        }
     }
 }

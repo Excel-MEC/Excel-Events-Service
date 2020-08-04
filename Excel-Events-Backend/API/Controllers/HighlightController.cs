@@ -19,14 +19,10 @@ namespace API.Controllers
     public class HighlightController : ControllerBase
     {
         private readonly IHighlightRepository _repo;
-        private readonly IMapper _mapper;
-        private readonly IEventService _service;
 
-        public HighlightController(IHighlightRepository repo, IMapper mapper, IEventService service)
+        public HighlightController(IHighlightRepository repo)
         {
             _repo = repo;
-            _mapper = mapper;
-            _service = service;
         }
 
         [SwaggerOperation(Description = " This route is for listing the event highlights. ")]

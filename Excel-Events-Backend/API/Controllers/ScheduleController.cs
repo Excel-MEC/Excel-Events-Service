@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
-using API.Dtos.Event;
 using API.Dtos.Schedule;
 using API.Models.Custom;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers
 {
-    [SwaggerTag("The routes under this controller are for performing CRUD operations on Schedules table.")]
+    [SwaggerTag("The routes under this controller are for performing CRUD operations on Schedule table. ")]
     [Route("/schedule")]
     [ApiController]
     public class ScheduleController : ControllerBase
@@ -30,15 +29,34 @@ namespace API.Controllers
             return events;
         }
         
-        [SwaggerOperation(Description = " This route is for adding new round. ")]
+        [SwaggerOperation(Description = " This route is for adding a round(schedule). Only admins can access these routes. ")]
         [Authorize(Roles = "Admin")]
         [HttpPost]   
-        public async Task<ActionResult> AddRound(DataForAddingEventRoundDto data)
+        public async Task<ActionResult> AddSchedule( [FromForm] DataForScheduleDto data)
         {    
-            var success =  await _repo.AddRound(data);
+            var success =  await _repo.AddSchedule(data);
             if(success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Problem in adding new round.");
         }
-
+        
+        [SwaggerOperation(Description = " This route is for modifying the schedule. Only admins can access these routes.")]
+        [Authorize(Roles = "Admin")]
+        [HttpPut]   
+        public async Task<ActionResult> UpdateSchedule( [FromForm] DataForScheduleDto dataFromClient)
+        {    
+            var success =  await _repo.UpdateSchedule(dataFromClient);
+            if(success) return Ok(new OkResponse { Response = "Success" });
+            throw new Exception("Problem in updating the schedule.");
+        }
+        
+        [SwaggerOperation(Description = " This route is for deleting the schedule. Only admins can access these routes. ")]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]   
+        public async Task<ActionResult> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
+        {    
+            var success =  await _repo.RemoveSchedule(dataFromClient);
+            if(success) return Ok(new OkResponse { Response = "Success" });
+            throw new Exception("Problem in deleting the schedule.");
+        }
     }
 }

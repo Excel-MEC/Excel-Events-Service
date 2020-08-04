@@ -24,6 +24,14 @@ namespace API.Controllers
             _repo = repo;
         }
 
+        [SwaggerOperation(Description = " This route is to return a list of events registered by a user. ")]
+        [HttpGet]
+        public async Task<ActionResult<List<EventForListViewDto>>> EventList()
+        {
+            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            return Ok(await _repo.EventList(id));
+        }
+        
         [SwaggerOperation(Description = " This route is used to provide event registration. ")]
         [HttpPost]
         public async Task<ActionResult> Register(DataFromClientDto data)
@@ -44,22 +52,6 @@ namespace API.Controllers
             throw new Exception("Problem clearing user data. Check out the userid");
         }
 
-        [SwaggerOperation(Description = " This route is to return a list of events registered by a user. ")]
-        [HttpGet]
-        public async Task<ActionResult<List<EventForListViewDto>>> EventList()
-        {
-            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
-            return Ok(await _repo.EventList(id));
-        }
-
-        [Authorize(Roles = "Admin")]
-        [SwaggerOperation(Description = " This route is used to return a list of users,registered for an event. Only admins can access this route. ")]
-        [HttpGet("{eventId}/users")]
-        public ActionResult<List<int>> UserList(string eventId)
-        {
-            return Ok(_repo.UserList(int.Parse(eventId)));
-        }
-
         [SwaggerOperation(Description = " This route is used to check whether a user has registered for an event or not. ")]
         [HttpGet("{eventId}")]
         public async Task<ActionResult<bool>> HasRegistered(string eventId)
@@ -68,6 +60,13 @@ namespace API.Controllers
             var success = await _repo.HasRegistered(excelId, int.Parse(eventId));
             return Ok(success);
         }
-
+        
+        [Authorize(Roles = "Admin")]
+        [SwaggerOperation(Description = " This route is used to return a list of users,registered for an event. Only admins can access this route. ")]
+        [HttpGet("{eventId}/users")]
+        public ActionResult<List<int>> UserList(string eventId)
+        {
+            return Ok(_repo.UserList(int.Parse(eventId)));
+        }
     }
 }
