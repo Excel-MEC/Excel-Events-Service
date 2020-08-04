@@ -32,7 +32,7 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for adding a round(schedule). Only admins can access these routes. ")]
         [Authorize(Roles = "Admin")]
         [HttpPost]   
-        public async Task<ActionResult> AddSchedule( [FromForm] DataForScheduleDto data)
+        public async Task<ActionResult> AddSchedule(DataForScheduleDto data)
         {    
             var success =  await _repo.AddSchedule(data);
             if(success) return Ok(new OkResponse { Response = "Success" });
@@ -42,7 +42,7 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for modifying the schedule. Only admins can access these routes.")]
         [Authorize(Roles = "Admin")]
         [HttpPut]   
-        public async Task<ActionResult> UpdateSchedule( [FromForm] DataForScheduleDto dataFromClient)
+        public async Task<ActionResult> UpdateSchedule(DataForScheduleDto dataFromClient)
         {    
             var success =  await _repo.UpdateSchedule(dataFromClient);
             if(success) return Ok(new OkResponse { Response = "Success" });
