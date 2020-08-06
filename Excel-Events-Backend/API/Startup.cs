@@ -92,6 +92,9 @@ namespace API
                 c.SwaggerEndpoint("/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json", "Excel Events");
             });
 
+            // Add CORS
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             // Middleware for Routing
             app.UseRouting();
 
