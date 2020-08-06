@@ -46,9 +46,9 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is to remove all bookmarks of a user when the user account is deleted. Only admins can access this route. ")]
         [Authorize(Roles = "Admin")]
         [HttpDelete]
-        public async Task<ActionResult> RemoveAll()
+        public async Task<ActionResult> RemoveAll(DataForDeletingDto data)
         {
-            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var id = data.Id;
             var success = await _repo.RemoveAll(id);
             if(success) return Ok(new OkResponse { Response = "Success"});
             throw new Exception("Problem clearing bookmarks. Check out the userid");
