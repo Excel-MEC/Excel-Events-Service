@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Bookmark;
+using API.Extensions.CustomExceptions;
 using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ namespace API.Data
         public async Task<bool> Add(int excelId, int eventId)
         {
             if( await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId) != null)
-                throw new Exception(" Event is already in bookmarks. ");
+                throw new InvalidOperationException(" Event is already in bookmarks. ");
             var favorite = new Bookmark
             {
                 ExcelId = excelId, EventId = eventId
@@ -54,6 +55,7 @@ namespace API.Data
         public async Task<bool> RemoveAll(int excelId)
         {
             var bookmarks = await _context.Bookmarks.Where(r => r.ExcelId == excelId).ToListAsync();
+            if(bookmarks.Count == 0) throw new DataInvalidException("Invalid User ID. Please re-check the user ID");
             _context.RemoveRange(bookmarks);
             var success = await _context.SaveChangesAsync() > 0;
             return success;

@@ -43,25 +43,24 @@ namespace API.Controllers
             throw new Exception("Problem in bookmarking the event");
         }
 
-        [SwaggerOperation(Description = " This route is to remove all bookmarks of a user when the user account is deleted. Only admins can access this route. ")]
-        [Authorize(Roles = "Admin")]
-        [HttpDelete]
-        public async Task<ActionResult> RemoveAll()
-        {
-            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
-            var success = await _repo.RemoveAll(id);
-            if(success) return Ok(new OkResponse { Response = "Success"});
-            throw new Exception("Problem clearing bookmarks. Check out the userid");
-        }
-
         [SwaggerOperation(Description = " This route is to remove a bookmarked event by the user. ")]
         [HttpDelete("{eventId}")]
-        public async Task<ActionResult<List<int>>> Remove(string eventId)
+        public async Task<ActionResult<List<int>>> Remove(int eventId)
         {
             var excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
-            var success = await _repo.Remove(excelId, int.Parse(eventId));
+            var success = await _repo.Remove(excelId, eventId);
             if(success) return Ok(new OkResponse { Response = "Success"});
             throw new Exception("Problem removing the bookmarked event");
+        }
+        
+        [SwaggerOperation(Description = " This route is to remove all bookmarks of a user when the user account is deleted. Only admins can access this route. ")]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("users/{userId}")]
+        public async Task<ActionResult> RemoveAll(int userId)
+        {
+            var success = await _repo.RemoveAll(userId);
+            if(success) return Ok(new OkResponse { Response = "Success"});
+            throw new Exception("Problem clearing bookmarks. Check out the userid");
         }
     }
 }
