@@ -39,8 +39,6 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<OkResponse>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
         {
-            System.Console.WriteLine(dataForAddingHighlight.Name);
-            System.Console.WriteLine(dataForAddingHighlight.Image);
             if( dataForAddingHighlight.Name == null ) throw new DataInvalidException("Name cannot be null");
             var success = await _repo.AddHighlight(dataForAddingHighlight);
             if (success) return Ok(new OkResponse { Response = "Success" });

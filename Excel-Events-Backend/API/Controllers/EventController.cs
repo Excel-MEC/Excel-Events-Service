@@ -37,7 +37,6 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
         {
-            Console.WriteLine(eventDataFromClient.Name);
             var success = await _repo.AddEvent(eventDataFromClient);
             if (success) return Ok(new OkResponse { Response = "Success" });
             throw new Exception("Something went wrong");
