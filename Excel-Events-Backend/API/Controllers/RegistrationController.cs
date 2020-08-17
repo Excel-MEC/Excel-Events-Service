@@ -49,7 +49,7 @@ namespace API.Controllers
         {
             var success = await _repo.ClearUserData(data.Id);
             if(success) return Ok(new OkResponse { Response = "Success"});
-            throw new Exception("Problem clearing user data. Check out the userid");
+            throw new Exception("Problem clearing user data.");
         }
 
         [SwaggerOperation(Description = " This route is used to check whether a user has registered for an event or not. ")]

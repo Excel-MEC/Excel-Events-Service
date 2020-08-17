@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
+using API.Extensions.CustomExceptions;
 using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace API.Data
         public async Task<bool> ClearUserData(int excelId)
         {
             var registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
+            if(registeredEventList.Count == 0) throw new DataInvalidException("Invalid excel ID. Please re-check the excel ID");
             _context.RemoveRange(registeredEventList);
             var success = await _context.SaveChangesAsync() > 0;
             return success;
@@ -44,7 +46,7 @@ namespace API.Data
 
         public async Task<bool> Register(int excelId, int eventId)
         {
-            if(await HasRegistered(excelId,eventId)) throw new Exception("Already registered for the event.");
+            if(await HasRegistered(excelId,eventId)) throw new OperationInvalidException("Already registered for the event.");
             var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
             var user = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(user);

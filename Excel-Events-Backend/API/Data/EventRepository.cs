@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
+using API.Extensions.CustomExceptions;
 using API.Models;
 using API.Services.Interfaces;
 using AutoMapper;
@@ -68,7 +69,7 @@ namespace API.Data
         public async Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
             var eventToDelete = await _context.Events.FindAsync(dataForDeletingEvent.Id);
-            if (eventToDelete.Name != dataForDeletingEvent.Name) throw new Exception("Id and Name does not match");
+            if (eventToDelete.Name != dataForDeletingEvent.Name) throw new DataInvalidException("Id and Name does not match");
             await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
             _context.Events.Remove(await _context.Events.FindAsync(dataForDeletingEvent.Id));
             return  await _context.SaveChangesAsync() > 0;

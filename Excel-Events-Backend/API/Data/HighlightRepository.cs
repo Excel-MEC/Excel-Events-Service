@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Highlight;
+using API.Extensions.CustomExceptions;
 using API.Models;
 using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace API.Data
 
         public async Task<bool> AddHighlight(DataForAddingHighlightDto dataForAddingHighlight)
         {
-            var newHighlight = new Highlight {Name = dataForAddingHighlight.Name};
+            var newHighlight = new Highlight {Name = dataForAddingHighlight.Name};            
             await _context.Highlights.AddAsync(newHighlight);
             await _context.SaveChangesAsync();
             var imageUrl = await _service.UploadHighlightImage(newHighlight.Id.ToString(), dataForAddingHighlight.Image);
@@ -39,7 +40,7 @@ namespace API.Data
         {
             var highlightToRemove = await _context.Highlights.FindAsync(dataForDeletingHighlight.Id);
             if (highlightToRemove.Name != dataForDeletingHighlight.Name)
-                throw new System.Exception("Name and Id does not match");
+                throw new DataInvalidException("Name and Id does not match");
             var imageUrl = highlightToRemove.Image;
             await _service.DeleteHighlightImage(highlightToRemove.Id, imageUrl);
             _context.Highlights.Remove(highlightToRemove);
