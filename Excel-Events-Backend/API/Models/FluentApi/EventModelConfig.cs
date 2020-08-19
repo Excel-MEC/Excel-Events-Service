@@ -70,6 +70,10 @@ namespace API.Models.FluentApi
             modelBuilder.Entity<Event>()
                 .Property(e => e.NeedRegistration) 
                 .HasDefaultValue(true);
+            
+            modelBuilder.Entity<Event>()
+                .Property(e => e.Day)
+                .HasDefaultValue(null);
         }
     }
 }

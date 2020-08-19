@@ -13,7 +13,7 @@ namespace API.Dtos.Event
         public string Format { get; set; }
         public string Rules { get; set; }
         public string Venue { get; set; }
-        public int Day { get; set; }
+        public int? Day { get; set; }
         public DateTime Datetime { get; set; }
         public int? EntryFee { get; set; }
         public int? PrizeMoney { get; set; }
