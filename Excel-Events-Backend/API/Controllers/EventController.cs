@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
 using API.Models.Custom;
-using API.Services.Interfaces;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
