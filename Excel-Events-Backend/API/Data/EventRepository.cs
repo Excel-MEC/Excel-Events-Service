@@ -57,6 +57,7 @@ namespace API.Data
 
         public async Task<bool> AddEvent(DataForAddingEventDto eventDataFromClient)
         {
+            if (eventDataFromClient.Icon is null) throw new DataInvalidException("Please provide an icon for the event");
             var newEvent = _mapper.Map<Event>(eventDataFromClient);
             await _context.Events.AddAsync(newEvent);
             if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem Saving Changes");
@@ -69,8 +70,10 @@ namespace API.Data
         public async Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
             var eventToDelete = await _context.Events.FindAsync(dataForDeletingEvent.Id);
-            if (eventToDelete.Name != dataForDeletingEvent.Name) throw new DataInvalidException("Id and Name does not match");
-            await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
+            if (eventToDelete.Name != dataForDeletingEvent.Name) 
+                throw new DataInvalidException("Id and Name does not match");
+            if (eventToDelete.Icon != null) 
+                await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
             _context.Events.Remove(await _context.Events.FindAsync(dataForDeletingEvent.Id));
             return  await _context.SaveChangesAsync() > 0;
         }

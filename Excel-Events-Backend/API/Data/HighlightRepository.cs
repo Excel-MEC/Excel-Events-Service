@@ -42,7 +42,8 @@ namespace API.Data
             if (highlightToRemove.Name != dataForDeletingHighlight.Name)
                 throw new DataInvalidException("Name and Id does not match");
             var imageUrl = highlightToRemove.Image;
-            await _service.DeleteHighlightImage(highlightToRemove.Id, imageUrl);
+            if(imageUrl != null)
+                await _service.DeleteHighlightImage(highlightToRemove.Id, imageUrl);
             _context.Highlights.Remove(highlightToRemove);
             return await _context.SaveChangesAsync() > 0;
         }
