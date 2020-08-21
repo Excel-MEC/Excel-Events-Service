@@ -13,7 +13,8 @@ namespace API.Data
             modelBuilder.AddEventModelConfig();
             modelBuilder.AddRegistrationModelConfig();
             modelBuilder.AddBookmarkModelConfig();            
-            modelBuilder.AddScheduleModelConfig();            
+            modelBuilder.AddScheduleModelConfig();
+            modelBuilder.AddEventHeadModelConfig();  
         }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventHead> EventHeads { get; set; }
