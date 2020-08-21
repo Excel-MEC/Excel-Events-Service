@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.EventHeads;
+using API.Extensions.CustomExceptions;
 using API.Models.Custom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +58,7 @@ namespace API.Controllers
         {    
             var success =  await _repo.UpdateEventHead(dataFromClient);
             if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in saving changes.");
+            throw new OperationInvalidException("No changes were made to update. Please re-check the input");
         }
         
         [SwaggerOperation(Description = " This route is for deleting an Event Head. Only admins can access these routes. ")]
