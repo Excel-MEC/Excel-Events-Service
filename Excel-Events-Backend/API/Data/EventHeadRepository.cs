@@ -40,6 +40,8 @@ namespace API.Data
         {
             if(newEventHead.Name == null || newEventHead.Email == null || newEventHead.PhoneNumber == null)
                 throw new DataInvalidException("Incorrect input. Please re-check your Name, Email and PhoneNumber");
+            var emailfromDb = _context.EventHeads.Where(e => e.Email == newEventHead.Email).Single();
+            if(emailfromDb != null) throw new DataInvalidException("This email is already associated with an EventHead");
             var newHead = new EventHead
             {
                 Name = newEventHead.Name,
@@ -54,6 +56,8 @@ namespace API.Data
         {
             var eventHeadFromDb = await _context.EventHeads.FindAsync(newEventHead.Id);
             if (eventHeadFromDb == null) throw new DataInvalidException("Invalid id. Please re-check the ID");
+            var emailfromDb = _context.EventHeads.Where(e => e.Email == newEventHead.Email).Single();
+            if(emailfromDb != null) throw new DataInvalidException("This email is already associated with an EventHead");
             eventHeadFromDb.Name = newEventHead.Name ?? eventHeadFromDb.Name;
             eventHeadFromDb.Email = newEventHead.Email ?? eventHeadFromDb.Email;
             eventHeadFromDb.PhoneNumber = newEventHead.PhoneNumber ?? eventHeadFromDb.PhoneNumber;
