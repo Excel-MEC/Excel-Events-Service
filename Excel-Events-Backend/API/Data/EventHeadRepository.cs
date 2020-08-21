@@ -54,19 +54,17 @@ namespace API.Data
 
         public async Task<bool> UpdateEventHead(DataForUpdatingEventHeadDto newEventHead)
         {
-            var eventHeadFromDb = await _context.EventHeads.FindAsync(newEventHead.Id);
-            if (eventHeadFromDb == null) throw new DataInvalidException("Invalid id. Please re-check the ID");
-            var eventHeadsFromDb = await _context.EventHeads.Where(e => e.Email == newEventHead.Email && e.Id != newEventHead.Id).ToListAsync();
-            if(eventHeadsFromDb.Count > 0) throw new DataInvalidException("This email is already associated with an EventHead");
-            eventHeadFromDb.Name = newEventHead.Name ?? eventHeadFromDb.Name;
-            eventHeadFromDb.Email = newEventHead.Email ?? eventHeadFromDb.Email;
-            eventHeadFromDb.PhoneNumber = newEventHead.PhoneNumber ?? eventHeadFromDb.PhoneNumber;
+            var eventHeadsFromDb = await _context.EventHeads.Where(e => e.Email == newEventHead.Email || e.Id == newEventHead.Id).ToListAsync();
+            if(eventHeadsFromDb.Count > 1) throw new DataInvalidException("This email is already associated with an EventHead");
+            if (eventHeadsFromDb.Count == 0 || eventHeadsFromDb[0].Id != newEventHead.Id) throw new DataInvalidException("Invalid id. Please re-check the ID");
+            eventHeadsFromDb[0].Name = newEventHead.Name ?? eventHeadsFromDb[0].Name;
+            eventHeadsFromDb[0].Email = newEventHead.Email ?? eventHeadsFromDb[0].Email;
+            eventHeadsFromDb[0].PhoneNumber = newEventHead.PhoneNumber ?? eventHeadsFromDb[0].PhoneNumber;
             return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> DeleteEventHead(DataForDeletingEventHeadDto dataForDeletingEventHead)
         {
-            Console.WriteLine(dataForDeletingEventHead.Id);
             if(dataForDeletingEventHead.Id == 0 || dataForDeletingEventHead.Name == null)
                 throw new DataInvalidException("Incorrect input. Please re-check the ID and Name");
             var eventHeadFromDb = await _context.EventHeads.FindAsync(dataForDeletingEventHead.Id);
