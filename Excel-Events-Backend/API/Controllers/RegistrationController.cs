@@ -43,7 +43,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = " This route is used to clear a user's data from registration table when the user account is deleted. Only admins can access this route. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
         public async Task<ActionResult> ClearUserData(DataFromClientDto data)
         {
@@ -61,7 +61,7 @@ namespace API.Controllers
             return Ok(success);
         }
         
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor, Staff")]
         [SwaggerOperation(Description = " This route is used to return a list of users,registered for an event. Only admins can access this route. ")]
         [HttpGet("{eventId}/users")]
         public ActionResult<List<int>> UserList(string eventId)

@@ -31,7 +31,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = " This route is for adding new events. Only admins can access this route. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Core,Editor")]
         [HttpPost]
         public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
         {
@@ -41,7 +41,7 @@ namespace API.Controllers
         }
        
         [SwaggerOperation(Description = "This route is for updating event details. Only admins can access this route.")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor")]
         [HttpPut]
         public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
         {
@@ -51,7 +51,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "This route is for deleting an event. Only admins can access this route.")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]    
         public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {

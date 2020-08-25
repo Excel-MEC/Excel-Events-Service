@@ -54,9 +54,9 @@ namespace API.Data
             return true;
         }
 
-        public List<int> UserList(int eventId)
+        public async Task<List<int>> UserList(int eventId)
         {
-            var registrations =  _context.Registrations.Where(x => x.EventId == eventId);
+            var registrations = await _context.Registrations.Where(x => x.EventId == eventId).ToListAsync();
             return registrations.Select(x => x.ExcelId).ToList();
         }
     }
