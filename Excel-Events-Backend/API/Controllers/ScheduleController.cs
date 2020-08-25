@@ -30,7 +30,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for adding a round(schedule). Only admins can access these routes. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor ")]
         [HttpPost]   
         public async Task<ActionResult> AddSchedule(DataForScheduleDto data)
         {    
@@ -40,7 +40,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for modifying the schedule. Only admins can access these routes.")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor ")]
         [HttpPut]   
         public async Task<ActionResult> UpdateSchedule(DataForScheduleDto dataFromClient)
         {    
@@ -50,7 +50,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for deleting the schedule. Only admins can access these routes. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]   
         public async Task<ActionResult> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
         {    

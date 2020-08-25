@@ -33,6 +33,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for returning the details of an EventHead ")]
+        [Authorize(Roles = "Admin, Core, Editor")]
         [HttpGet("{id}")]   
         public async Task<EventHeadForViewDto> GetEventHead(int id)
         {
@@ -41,7 +42,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for adding new Event Head. Only admins can access these routes. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor")]
         [HttpPost]   
         public async Task<ActionResult> AddEventHead(DataForAddingEventHead newEventHead)
         {    
@@ -52,7 +53,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for updating the details of an Event Head. Only admins can access these routes.")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor")]
         [HttpPut]   
         public async Task<ActionResult> UpdateEventHead(DataForUpdatingEventHeadDto dataFromClient)
         {    
@@ -62,7 +63,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for deleting an Event Head. Only admins can access these routes. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]   
         public async Task<ActionResult> RemoveEventHead(DataForDeletingEventHeadDto dataFromClient)
         {    
