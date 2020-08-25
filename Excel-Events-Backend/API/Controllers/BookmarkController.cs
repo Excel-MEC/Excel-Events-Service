@@ -54,7 +54,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is to remove all bookmarks of a user when the user account is deleted. Only admins can access this route. ")]
-        [Authorize(Roles = "Admin, Editor")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("users/{userId}")]
         public async Task<ActionResult> RemoveAll(int userId)
         {

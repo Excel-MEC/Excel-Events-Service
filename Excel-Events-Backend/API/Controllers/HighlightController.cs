@@ -35,7 +35,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for adding an event highlight. Only admins can access this route. ")]
-        [Authorize(Roles = "Admin, Core, Editor")]
+        [Authorize(Roles = "Admin, Editor")]
         [HttpPost]
         public async Task<ActionResult<OkResponse>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
         {
