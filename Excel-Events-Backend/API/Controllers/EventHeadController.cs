@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.EventHeads;
-using API.Extensions.CustomExceptions;
-using API.Models.Custom;
+using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -44,32 +42,25 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for adding new Event Head. Only admins can access these routes. ")]
         [Authorize(Roles = "Admin, Core, Editor")]
         [HttpPost]   
-        public async Task<ActionResult> AddEventHead(DataForAddingEventHead newEventHead)
+        public async Task<ActionResult<EventHead>> AddEventHead(DataForAddingEventHead newEventHead)
         {    
-            
-            var success =  await _repo.AddEventHead(newEventHead);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in saving changes");
+           return Ok(await _repo.AddEventHead(newEventHead));
         }
         
         [SwaggerOperation(Description = " This route is for updating the details of an Event Head. Only admins can access these routes.")]
         [Authorize(Roles = "Admin, Core, Editor")]
         [HttpPut]   
-        public async Task<ActionResult> UpdateEventHead(DataForUpdatingEventHeadDto dataFromClient)
+        public async Task<ActionResult<EventHead>> UpdateEventHead(DataForUpdatingEventHeadDto dataFromClient)
         {    
-            var success =  await _repo.UpdateEventHead(dataFromClient);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new OperationInvalidException("No changes were made to update. Please re-check the input");
+           return Ok(await _repo.UpdateEventHead(dataFromClient));
         }
         
         [SwaggerOperation(Description = " This route is for deleting an Event Head. Only admins can access these routes. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]   
-        public async Task<ActionResult> RemoveEventHead(DataForDeletingEventHeadDto dataFromClient)
+        public async Task<ActionResult<EventHead>> RemoveEventHead(DataForDeletingEventHeadDto dataFromClient)
         {    
-            var success =  await _repo.DeleteEventHead(dataFromClient);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in saving changes.");
+            return Ok(await _repo.DeleteEventHead(dataFromClient));
         }
     }
 }

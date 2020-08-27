@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Dtos.EventHeads;
+using API.Models;
 
 
 namespace API.Data.Interfaces
@@ -9,8 +10,8 @@ namespace API.Data.Interfaces
     {
         Task<List<EventHeadForViewDto>> ListEventHeads();  
         Task<EventHeadForViewDto> GetEventHead(int id);
-        Task<bool> AddEventHead(DataForAddingEventHead newEventHead);
-        Task<bool> UpdateEventHead(DataForUpdatingEventHeadDto newEventHead);
-        Task<bool> DeleteEventHead(DataForDeletingEventHeadDto dataForDeletingEventHead);
+        Task<EventHead> AddEventHead(DataForAddingEventHead newEventHead);
+        Task<EventHead> UpdateEventHead(DataForUpdatingEventHeadDto newEventHead);
+        Task<EventHead> DeleteEventHead(DataForDeletingEventHeadDto dataForDeletingEventHead);
     }
 }

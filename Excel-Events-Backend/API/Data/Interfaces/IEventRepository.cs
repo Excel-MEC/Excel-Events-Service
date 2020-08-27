@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Dtos.Event;
+using API.Models;
 
 namespace API.Data.Interfaces
 {
@@ -11,8 +12,8 @@ namespace API.Data.Interfaces
         Task<List<EventForListViewDto>> EventListOfType(int id);
         Task<List<EventForListViewDto>> EventListOfCategory(int id);
         Task<EventForDetailedViewDto> GetEvent(int id);  
-        Task<bool> AddEvent(DataForAddingEventDto newEvent);
-        Task<bool> UpdateEvent(DataForUpdatingEventDto newEvent);
-        Task<bool> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent);
+        Task<Event> AddEvent(DataForAddingEventDto newEvent);
+        Task<Event> UpdateEvent(DataForUpdatingEventDto newEvent);
+        Task<Event> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent);
     }
 }

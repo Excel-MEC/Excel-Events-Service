@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Schedule;
-using API.Models.Custom;
+using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -32,31 +31,25 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for adding a round(schedule). Only admins can access these routes. ")]
         [Authorize(Roles = "Admin, Core, Editor ")]
         [HttpPost]   
-        public async Task<ActionResult> AddSchedule(DataForScheduleDto data)
+        public async Task<ActionResult<Schedule>> AddSchedule(DataForScheduleDto data)
         {    
-            var success =  await _repo.AddSchedule(data);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in adding new round.");
+            return Ok(await _repo.AddSchedule(data));
         }
         
         [SwaggerOperation(Description = " This route is for modifying the schedule. Only admins can access these routes.")]
         [Authorize(Roles = "Admin, Core, Editor ")]
         [HttpPut]   
-        public async Task<ActionResult> UpdateSchedule(DataForScheduleDto dataFromClient)
+        public async Task<ActionResult<Schedule>> UpdateSchedule(DataForScheduleDto dataFromClient)
         {    
-            var success =  await _repo.UpdateSchedule(dataFromClient);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in updating the schedule.");
+            return Ok(await _repo.UpdateSchedule(dataFromClient));
         }
         
         [SwaggerOperation(Description = " This route is for deleting the schedule. Only admins can access these routes. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]   
-        public async Task<ActionResult> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
+        public async Task<ActionResult<Schedule>> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
         {    
-            var success =  await _repo.RemoveSchedule(dataFromClient);
-            if(success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Problem in deleting the schedule.");
+            return Ok(await _repo.RemoveSchedule(dataFromClient));
         }
     }
 }

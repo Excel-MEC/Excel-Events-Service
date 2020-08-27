@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
+using API.Models;
 using API.Models.Custom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,31 +34,25 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for adding new events. Only admins can access this route. ")]
         [Authorize(Roles = "Admin,Core,Editor")]
         [HttpPost]
-        public async Task<ActionResult> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
+        public async Task<ActionResult<Event>> AddEvent([FromForm] DataForAddingEventDto eventDataFromClient)
         {
-            var success = await _repo.AddEvent(eventDataFromClient);
-            if (success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Something went wrong");
+            return Ok(await _repo.AddEvent(eventDataFromClient));
         }
        
         [SwaggerOperation(Description = "This route is for updating event details. Only admins can access this route.")]
         [Authorize(Roles = "Admin, Core, Editor")]
         [HttpPut]
-        public async Task<ActionResult> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
+        public async Task<ActionResult<Event>> UpdateEvent([FromForm] DataForUpdatingEventDto eventDataFromClient)
         {
-            var success = await _repo.UpdateEvent(eventDataFromClient);
-            if (success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Something went wrong");
+            return Ok(await _repo.UpdateEvent(eventDataFromClient));
         }
 
         [SwaggerOperation(Description = "This route is for deleting an event. Only admins can access this route.")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]    
-        public async Task<ActionResult<OkResponse>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
+        public async Task<ActionResult<Event>> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
-            var success = await _repo.DeleteEvent(dataForDeletingEvent);
-            if (success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Error Deleting Event");
+           return Ok(await _repo.DeleteEvent(dataForDeletingEvent));
         }
 
         [HttpGet("{id}")]
@@ -69,7 +64,7 @@ namespace API.Controllers
         
         [SwaggerOperation(Description = " This route returns all the events that matches the applied filters. ")]
         [HttpGet("event_type={eventType}&category={category}")]
-        public async Task<ActionResult> FilteredList(string eventType, string category)
+        public async Task<ActionResult<List<EventForListViewDto>>> FilteredList(string eventType, string category)
         {
             int eventTypeId, categoryId;
             eventTypeId = Array.IndexOf(Constants.EventType, eventType);
@@ -80,7 +75,7 @@ namespace API.Controllers
 
         [SwaggerOperation(Description = " This route returns all the events that matches the given event type.")]
         [HttpGet("type/{event_type}")]
-        public async Task<ActionResult> GetEventsOfType(string event_type)
+        public async Task<ActionResult<List<EventForListViewDto>>> GetEventsOfType(string event_type)
         {
             var eventTypeId = Array.IndexOf(Constants.EventType, event_type);
             var filteredEvents = await _repo.EventListOfType(eventTypeId);
@@ -89,7 +84,7 @@ namespace API.Controllers
 
         [SwaggerOperation(Description = "This route returns all the events that matches the given event category. ")]
         [HttpGet("category/{category}")]
-        public async Task<ActionResult> GetEventsOfCategory(string category)
+        public async Task<ActionResult<List<EventForListViewDto>>> GetEventsOfCategory(string category)
         {
             var categoryId = Array.IndexOf(Constants.EventType, category);
             var filteredEvents = await _repo.EventListOfCategory(categoryId);

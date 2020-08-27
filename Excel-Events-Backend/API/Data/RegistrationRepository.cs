@@ -21,13 +21,13 @@ namespace API.Data
             _context = context;
         }
 
-        public async Task<bool> ClearUserData(int excelId)
+        public async Task<List<Registration>> ClearUserData(int excelId)
         {
             var registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
             if(registeredEventList.Count == 0) throw new DataInvalidException("Invalid excel ID. Please re-check the excel ID");
             _context.RemoveRange(registeredEventList);
-            var success = await _context.SaveChangesAsync() > 0;
-            return success;
+            if( await _context.SaveChangesAsync() > 0) return registeredEventList;
+            throw new Exception("Problem clearing user data.");
         }
 
         public async Task<List<EventForListViewDto>> EventList(int excelId)
@@ -44,14 +44,15 @@ namespace API.Data
             return success != null;
         }
 
-        public async Task<bool> Register(int excelId, int eventId)
+        public async Task<Registration> Register(int excelId, int eventId)
         {
             if(await HasRegistered(excelId,eventId)) throw new OperationInvalidException("Already registered for the event.");
             var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
-            var user = new Registration {EventId = eventId, ExcelId = excelId};
-            await _context.Registrations.AddAsync(user);
-            if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem saving changes");
-            return true;
+            if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
+            var newRegistration = new Registration {EventId = eventId, ExcelId = excelId};
+            await _context.Registrations.AddAsync(newRegistration);
+            if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem registering user");
+            return newRegistration;
         }
 
         public async Task<List<int>> UserList(int eventId)

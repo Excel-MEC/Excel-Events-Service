@@ -8,7 +8,7 @@ namespace API.Data.Interfaces
     public interface IHighlightRepository
     {
         Task<List<Highlight>> GetHighlights();
-        Task<bool> AddHighlight(DataForAddingHighlightDto dataForAddingHighlight);
-        Task<bool> DeleteHighlight(DataForDeletingHighlightDto dataForDeletingHighlight);
+        Task<Highlight> AddHighlight(DataForAddingHighlightDto dataForAddingHighlight);
+        Task<Highlight> DeleteHighlight(DataForDeletingHighlightDto dataForDeletingHighlight);
     }
 }
