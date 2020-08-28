@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Highlight;
 using API.Extensions.CustomExceptions;
 using API.Models;
-using API.Models.Custom;
-using API.Services.Interfaces;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -37,22 +33,18 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for adding an event highlight. Only admins can access this route. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpPost]
-        public async Task<ActionResult<OkResponse>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
+        public async Task<ActionResult<Highlight>> Add([FromForm] DataForAddingHighlightDto dataForAddingHighlight)
         {
             if( dataForAddingHighlight.Name == null ) throw new DataInvalidException("Name cannot be null");
-            var success = await _repo.AddHighlight(dataForAddingHighlight);
-            if (success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Failed to Add Highlight");
+            return Ok(await _repo.AddHighlight(dataForAddingHighlight));
         }
 
         [SwaggerOperation(Description = " This route is for deleting an event highlight. Only admins can access this route. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
-        public async Task<ActionResult<OkResponse>> Delete(DataForDeletingHighlightDto dataForDeletingHighlight)
+        public async Task<ActionResult<Highlight>> Delete(DataForDeletingHighlightDto dataForDeletingHighlight)
         {
-            var success = await _repo.DeleteHighlight(dataForDeletingHighlight);
-            if (success) return Ok(new OkResponse { Response = "Success" });
-            throw new Exception("Error deleting the Highlight");
+            return Ok(await _repo.DeleteHighlight(dataForDeletingHighlight));
         }
     }
 }

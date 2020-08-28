@@ -21,6 +21,8 @@ namespace API.Helpers
             CreateMap<Schedule, EventRoundForScheduleViewDto>();
             CreateMap<EventHead, EventHeadForViewDto>();
             CreateMap<EventHeadForViewDto, EventHead>();
+            CreateMap<Schedule, ScheduleViewDto>();
+            CreateMap<Bookmark, BookmarkForViewDto>();
         }
     }
 }
