@@ -15,11 +15,13 @@ namespace API.Data
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+
         public ScheduleRepository(DataContext context, IMapper mapper)
         {
             _mapper = mapper;
             _context = context;
         }
+
         public async Task<List<EventForScheduleListViewDto>> ScheduleList()
         {
             var eventForScheduleList = new List<EventForScheduleListViewDto>();
@@ -43,8 +45,10 @@ namespace API.Data
                 eventForSchedule.Events = eventListForView;
                 eventForScheduleList.Add(eventForSchedule);
             }
+
             return eventForScheduleList;
         }
+
         private static List<EventForScheduleViewDto> Map(List<EventRoundForScheduleViewDto> events)
         {
             return events.Select(e => new EventForScheduleViewDto
@@ -61,11 +65,12 @@ namespace API.Data
                 })
                 .ToList();
         }
+
         public async Task<ScheduleViewDto> AddSchedule(DataForScheduleDto dataFromClient)
         {
             var eventFromDb = await _context.Events.Include(e => e.Rounds)
                 .FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
-            if(eventFromDb == null) throw new DataInvalidException("Invalid event ID");
+            if (eventFromDb == null) throw new DataInvalidException("Invalid event ID");
             var newRound = _mapper.Map<Schedule>(dataFromClient);
             eventFromDb.Rounds.Add(newRound);
             eventFromDb.NumberOfRounds += 1;
@@ -74,9 +79,10 @@ namespace API.Data
                 eventFromDb.Day = dataFromClient.Day;
                 eventFromDb.Datetime = dataFromClient.Datetime;
             }
+
             await _context.Rounds.AddAsync(newRound);
-            if(await _context.SaveChangesAsync() > 0) return _mapper.Map<ScheduleViewDto>(newRound);
-            throw new Exception("Problem in adding new round.");
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ScheduleViewDto>(newRound);
         }
 
         public async Task<ScheduleViewDto> UpdateSchedule(DataForScheduleDto dataFromClient)
@@ -91,8 +97,9 @@ namespace API.Data
                 scheduledEvent.Day = dataFromClient.Day;
                 scheduledEvent.Datetime = dataFromClient.Datetime;
             }
-            if (await _context.SaveChangesAsync() > 0) return _mapper.Map<ScheduleViewDto>(eventFromSchedule);
-            throw new Exception("Problem in updating the schedule.");
+
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ScheduleViewDto>(eventFromSchedule);
         }
 
         public async Task<ScheduleViewDto> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
@@ -106,8 +113,9 @@ namespace API.Data
                 scheduledEvent.Day = default(int);
                 scheduledEvent.Datetime = default(DateTime);
             }
-            if (await _context.SaveChangesAsync() > 0) return _mapper.Map<ScheduleViewDto>(eventFromSchedule);
-            throw new Exception("Problem in deleting the schedule.");
+
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ScheduleViewDto>(eventFromSchedule);
         }
     }
 }

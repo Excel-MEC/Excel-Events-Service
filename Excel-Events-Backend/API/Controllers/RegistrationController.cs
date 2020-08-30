@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> EventList()
         {
-            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var id = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
             return Ok(await _repo.EventList(id));
         }
         
@@ -35,7 +36,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Registration>> Register(DataFromClientDto data)
         {
-            var excelId = int.Parse(this.User.Claims.First(i => i.Type == "user_id").Value);
+            var excelId = int.Parse(User.Claims.First(i => i.Type == "user_id").Value);
             return Ok(await _repo.Register(excelId, data.Id));
         }
 
@@ -51,8 +52,25 @@ namespace API.Controllers
         [HttpGet("{eventId}")]
         public async Task<ActionResult<bool>> HasRegistered(string eventId)
         {
-            var excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
             return Ok(await _repo.HasRegistered(excelId, int.Parse(eventId)));
+        }
+        
+        [Authorize(Roles = "Admin, Core, Editor")]
+        [SwaggerOperation(Description = " This route is used to provide event registration by privileged users( Admin, Core, Editor). ")]
+        [HttpPost("admin")]
+        public async Task<ActionResult<Registration>> RegistrationForPrivilegedUser(DataFromPrivilegedUserDto data)
+        {
+            Console.WriteLine("I am admin");
+            return Ok(await _repo.Register(data.ExcelId, data.EventId));
+        }
+        
+        [Authorize(Roles = "Admin, Core, Editor")]
+        [SwaggerOperation(Description = " This route is delete an user registration by privileged users( Admin, Core, Editor). ")]
+        [HttpDelete("admin")]
+        public async Task<ActionResult<Registration>> RemoveRegistration(DataFromPrivilegedUserDto data)
+        {
+            return Ok(await _repo.RemoveRegistration(data.ExcelId, data.EventId));
         }
         
         [Authorize(Roles = "Admin, Core, Editor, Staff")]
@@ -62,5 +80,7 @@ namespace API.Controllers
         {
             return Ok( await _repo.UserList(int.Parse(eventId)));
         }
+        
+        
     }
 }

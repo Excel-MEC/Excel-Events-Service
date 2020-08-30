@@ -12,5 +12,6 @@ namespace API.Data.Interfaces
         Task<List<EventForListViewDto>> EventList(int excelId);
         Task<List<int>> UserList(int eventId);
         Task<bool> HasRegistered(int excelId, int eventId);
+        Task<Registration> RemoveRegistration(int excelId, int eventId);
     }
 }

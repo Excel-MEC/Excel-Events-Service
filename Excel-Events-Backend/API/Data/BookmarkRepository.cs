@@ -16,6 +16,7 @@ namespace API.Data
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IRegistrationRepository _repo;
+
         public BookmarkRepository(DataContext context, IMapper mapper, IRegistrationRepository repo)
         {
             _repo = repo;
@@ -25,15 +26,15 @@ namespace API.Data
 
         public async Task<BookmarkForViewDto> Add(int excelId, int eventId)
         {
-            if( await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId) != null)
+            if (await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId) != null)
                 throw new InvalidOperationException(" Event is already in bookmarks. ");
             var favorite = new Bookmark
             {
                 ExcelId = excelId, EventId = eventId
             };
             await _context.Bookmarks.AddAsync(favorite);
-            if (await _context.SaveChangesAsync() > 0) return _mapper.Map<BookmarkForViewDto>(favorite);
-            throw new Exception("Problem in bookmarking the event");
+            await _context.SaveChangesAsync();
+            return _mapper.Map<BookmarkForViewDto>(favorite);
         }
 
         public async Task<List<EventForBookmarkListViewDto>> EventList(int excelId)
@@ -48,18 +49,17 @@ namespace API.Data
         {
             var fav = await _context.Bookmarks.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
             _context.Remove(fav);
-            if(await _context.SaveChangesAsync() > 0) return _mapper.Map<BookmarkForViewDto>(fav);
-            throw new Exception("Problem removing the bookmarked event");
+            await _context.SaveChangesAsync();
+            return _mapper.Map<BookmarkForViewDto>(fav);
         }
 
         public async Task<List<BookmarkForViewDto>> RemoveAll(int excelId)
         {
             var bookmarks = await _context.Bookmarks.Where(r => r.ExcelId == excelId).ToListAsync();
-            if(bookmarks.Count == 0) throw new DataInvalidException("Invalid User ID. Please re-check the user ID");
+            if (bookmarks.Count == 0) throw new DataInvalidException("Invalid User ID. Please re-check the user ID");
             _context.RemoveRange(bookmarks);
-            if (await _context.SaveChangesAsync() > 0)
-                return bookmarks.Select(x => _mapper.Map<BookmarkForViewDto>(x)).ToList();
-            throw new Exception("Problem clearing bookmarks. Check out the userid");
+            await _context.SaveChangesAsync();
+            return bookmarks.Select(x => _mapper.Map<BookmarkForViewDto>(x)).ToList();
         }
     }
 }

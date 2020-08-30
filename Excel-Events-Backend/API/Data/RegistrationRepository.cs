@@ -26,8 +26,8 @@ namespace API.Data
             var registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
             if(registeredEventList.Count == 0) throw new DataInvalidException("Invalid excel ID. Please re-check the excel ID");
             _context.RemoveRange(registeredEventList);
-            if( await _context.SaveChangesAsync() > 0) return registeredEventList;
-            throw new Exception("Problem clearing user data.");
+            await _context.SaveChangesAsync();
+            return registeredEventList;
         }
 
         public async Task<List<EventForListViewDto>> EventList(int excelId)
@@ -44,6 +44,15 @@ namespace API.Data
             return success != null;
         }
 
+        public async Task<Registration> RemoveRegistration(int excelId, int eventId)
+        {
+            var registration = await _context.Registrations.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
+            if(registration == null) throw new DataInvalidException("Invalid excel ID or event ID");
+            _context.Remove(registration);
+            await _context.SaveChangesAsync();
+            return registration;
+        }
+
         public async Task<Registration> Register(int excelId, int eventId)
         {
             if(await HasRegistered(excelId,eventId)) throw new OperationInvalidException("Already registered for the event.");
@@ -51,7 +60,7 @@ namespace API.Data
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(newRegistration);
-            if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem registering user");
+            await _context.SaveChangesAsync() ;
             return newRegistration;
         }
 
