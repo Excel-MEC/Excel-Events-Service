@@ -17,6 +17,7 @@ namespace API.Data
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IEventService _service;
+
         public EventRepository(DataContext context, IMapper mapper, IEventService service)
         {
             _context = context;
@@ -32,7 +33,8 @@ namespace API.Data
 
         public async Task<List<EventForListViewDto>> FilteredList(int eventTypeId, int categoryId)
         {
-            var filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId && e.CategoryId == categoryId).ToListAsync();
+            var filteredEvents = await _context.Events
+                .Where(e => e.EventTypeId == eventTypeId && e.CategoryId == categoryId).ToListAsync();
             return filteredEvents.Select(e => _mapper.Map<EventForListViewDto>(e)).ToList();
         }
 
@@ -41,6 +43,7 @@ namespace API.Data
             var filteredEvents = await _context.Events.Where(e => e.EventTypeId == eventTypeId).ToListAsync();
             return filteredEvents.Select(e => _mapper.Map<EventForListViewDto>(e)).ToList();
         }
+
         public async Task<List<EventForListViewDto>> EventListOfCategory(int categoryId)
         {
             var filteredEvents = await _context.Events.Where(e => e.CategoryId == categoryId).ToListAsync();
@@ -57,26 +60,27 @@ namespace API.Data
 
         public async Task<Event> AddEvent(DataForAddingEventDto eventDataFromClient)
         {
-            if (eventDataFromClient.Icon is null) throw new DataInvalidException("Please provide an icon for the event");
+            if (eventDataFromClient.Icon is null)
+                throw new DataInvalidException("Please provide an icon for the event");
             var newEvent = _mapper.Map<Event>(eventDataFromClient);
             await _context.Events.AddAsync(newEvent);
             if (await _context.SaveChangesAsync() <= 0) throw new Exception("Problem Saving Changes");
             var imageUrl = await _service.UploadEventIcon(newEvent.Id.ToString(), eventDataFromClient.Icon);
             newEvent.Icon = imageUrl;
-            if (await _context.SaveChangesAsync() > 0) return newEvent;
-            throw new Exception("Trouble saving Image Name");
+            await _context.SaveChangesAsync();
+            return newEvent;
         }
-        
+
         public async Task<Event> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent)
         {
             var eventToDelete = await _context.Events.FindAsync(dataForDeletingEvent.Id);
-            if (eventToDelete.Name != dataForDeletingEvent.Name) 
+            if (eventToDelete.Name != dataForDeletingEvent.Name)
                 throw new DataInvalidException("Id and Name does not match");
-            if (eventToDelete.Icon != null) 
+            if (eventToDelete.Icon != null)
                 await _service.DeleteEventIcon(dataForDeletingEvent.Id, eventToDelete.Icon);
             _context.Events.Remove(await _context.Events.FindAsync(dataForDeletingEvent.Id));
-            if (await _context.SaveChangesAsync() > 0) return eventToDelete;
-            throw new Exception("Error Deleting Event");
+            await _context.SaveChangesAsync();
+            return eventToDelete;
         }
 
         public async Task<Event> UpdateEvent(DataForUpdatingEventDto eventDataFromClient)
@@ -86,15 +90,18 @@ namespace API.Data
             if (eventDataFromClient.Icon != null)
             {
                 await _service.DeleteEventIcon(eventFromDb.Id, eventFromDb.Icon);
-                var imageUrl = await _service.UploadEventIcon(eventDataFromClient.Id.ToString(), eventDataFromClient.Icon);
+                var imageUrl =
+                    await _service.UploadEventIcon(eventDataFromClient.Id.ToString(), eventDataFromClient.Icon);
                 eventForUpdate.Icon = !eventFromDb.Icon.Equals(imageUrl) ? imageUrl : eventFromDb.Icon;
             }
             else
                 eventForUpdate.Icon = eventFromDb.Icon;
+
             CopyChanges(eventForUpdate, eventFromDb);
-            if (await _context.SaveChangesAsync() > 0) return eventFromDb;
-            throw new Exception("Problem in updating event");
+            await _context.SaveChangesAsync();
+            return eventFromDb;
         }
+
         private static void CopyChanges(Event src, Event dest)
         {
             dest.Icon = src.Icon;

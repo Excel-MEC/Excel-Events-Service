@@ -49,8 +49,8 @@ namespace API.Data
                 PhoneNumber = newEventHead.PhoneNumber
             };
             await _context.EventHeads.AddAsync(newHead);
-            if(await _context.SaveChangesAsync() > 0) return  newHead;
-            throw new Exception("Problem in saving changes");
+            await _context.SaveChangesAsync();
+            return  newHead;
         }
 
         public async Task<EventHead> UpdateEventHead(DataForUpdatingEventHeadDto newEventHead)
@@ -61,8 +61,8 @@ namespace API.Data
             eventHeadsFromDb[0].Name = newEventHead.Name ?? eventHeadsFromDb[0].Name;
             eventHeadsFromDb[0].Email = newEventHead.Email ?? eventHeadsFromDb[0].Email;
             eventHeadsFromDb[0].PhoneNumber = newEventHead.PhoneNumber ?? eventHeadsFromDb[0].PhoneNumber;
-            if(await _context.SaveChangesAsync() > 0) return  newEventHead;
-            throw new OperationInvalidException("No changes were made to update. Please re-check the input");
+            await _context.SaveChangesAsync() ; 
+            return  newEventHead;
         }
 
         public async Task<EventHead> DeleteEventHead(DataForDeletingEventHeadDto dataForDeletingEventHead)
@@ -74,8 +74,7 @@ namespace API.Data
             if( dataForDeletingEventHead.Name != eventHeadFromDb.Name) 
                 throw new DataInvalidException(" Name and Id does not match. Please re-check the ID and Name");
             _context.EventHeads.Remove(eventHeadFromDb);
-            if(await _context.SaveChangesAsync() > 0) return  eventHeadFromDb;
-            throw new Exception("Problem in saving changes.");
+            await _context.SaveChangesAsync() ; return  eventHeadFromDb;
         }
     }
 }

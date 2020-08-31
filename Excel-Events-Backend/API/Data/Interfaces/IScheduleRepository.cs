@@ -8,8 +8,8 @@ namespace API.Data.Interfaces
     public interface IScheduleRepository
     {    
         Task<List<EventForScheduleListViewDto>> ScheduleList();
-        Task<ScheduleViewDto> AddSchedule(DataForScheduleDto dataFromClient); 
-        Task<ScheduleViewDto> UpdateSchedule(DataForScheduleDto dataFromClient);
-        Task<ScheduleViewDto> RemoveSchedule(DataForDeletingScheduleDto dataFromClient);
+        Task<ScheduleForViewDto> AddSchedule(DataForScheduleDto dataFromClient); 
+        Task<ScheduleForViewDto> UpdateSchedule(DataForScheduleDto dataFromClient);
+        Task<ScheduleForViewDto> RemoveSchedule(DataForDeletingScheduleDto dataFromClient);
     }
 }

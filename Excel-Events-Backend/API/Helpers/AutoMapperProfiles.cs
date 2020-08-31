@@ -1,6 +1,7 @@
 using API.Dtos.Bookmark;
 using API.Dtos.Event;
 using API.Dtos.EventHeads;
+using API.Dtos.Registration;
 using API.Dtos.Schedule;
 using API.Models;
 using AutoMapper;
@@ -21,8 +22,9 @@ namespace API.Helpers
             CreateMap<Schedule, EventRoundForScheduleViewDto>();
             CreateMap<EventHead, EventHeadForViewDto>();
             CreateMap<EventHeadForViewDto, EventHead>();
-            CreateMap<Schedule, ScheduleViewDto>();
+            CreateMap<Schedule, ScheduleForViewDto>();
             CreateMap<Bookmark, BookmarkForViewDto>();
+            CreateMap<Registration, RegistrationForViewDto>();
         }
     }
 }

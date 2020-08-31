@@ -23,13 +23,14 @@ namespace API.Data
 
         public async Task<Highlight> AddHighlight(DataForAddingHighlightDto dataForAddingHighlight)
         {
-            var newHighlight = new Highlight {Name = dataForAddingHighlight.Name};            
+            var newHighlight = new Highlight {Name = dataForAddingHighlight.Name};
             await _context.Highlights.AddAsync(newHighlight);
             await _context.SaveChangesAsync();
-            var imageUrl = await _service.UploadHighlightImage(newHighlight.Id.ToString(), dataForAddingHighlight.Image);
+            var imageUrl =
+                await _service.UploadHighlightImage(newHighlight.Id.ToString(), dataForAddingHighlight.Image);
             newHighlight.Image = imageUrl;
-            if(await _context.SaveChangesAsync() > 0) return newHighlight;
-            throw new Exception("Failed to Add Highlight");
+            await _context.SaveChangesAsync();
+            return newHighlight;
         }
 
         public async Task<List<Highlight>> GetHighlights()
@@ -44,11 +45,11 @@ namespace API.Data
             if (highlightToRemove.Name != dataForDeletingHighlight.Name)
                 throw new DataInvalidException("Name and Id does not match");
             var imageUrl = highlightToRemove.Image;
-            if(imageUrl != null)
+            if (imageUrl != null)
                 await _service.DeleteHighlightImage(highlightToRemove.Id, imageUrl);
             _context.Highlights.Remove(highlightToRemove);
-            if(await _context.SaveChangesAsync() > 0) return highlightToRemove;
-            throw new Exception("Error deleting the Highlight");
+            await _context.SaveChangesAsync();
+            return highlightToRemove;
         }
     }
 }

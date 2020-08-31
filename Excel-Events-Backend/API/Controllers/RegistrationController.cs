@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,22 +28,22 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<EventForListViewDto>>> EventList()
         {
-            var id = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var id = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
             return Ok(await _repo.EventList(id));
         }
         
         [SwaggerOperation(Description = " This route is used to provide event registration. ")]
         [HttpPost]
-        public async Task<ActionResult<Registration>> Register(DataFromClientDto data)
+        public async Task<ActionResult<RegistrationForViewDto>> AddRegistration(DataForRegistrationDto data)
         {
-            var excelId = int.Parse(this.User.Claims.First(i => i.Type == "user_id").Value);
+            var excelId = int.Parse(User.Claims.First(i => i.Type == "user_id").Value);
             return Ok(await _repo.Register(excelId, data.Id));
         }
 
         [SwaggerOperation(Description = " This route is used to clear a user's data from registration table when the user account is deleted. Only admins can access this route. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
-        public async Task<ActionResult<List<Registration>>> ClearUserData(DataFromClientDto data)
+        public async Task<ActionResult<List<RegistrationForViewDto>>> ClearUserData(DataForRegistrationDto data)
         {
             return Ok(await _repo.ClearUserData(data.Id));
         }
@@ -51,8 +52,24 @@ namespace API.Controllers
         [HttpGet("{eventId}")]
         public async Task<ActionResult<bool>> HasRegistered(string eventId)
         {
-            var excelId = int.Parse(this.User.Claims.First(x => x.Type == "user_id").Value);
+            var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
             return Ok(await _repo.HasRegistered(excelId, int.Parse(eventId)));
+        }
+        
+        [Authorize(Roles = "Admin, Core, Editor")]
+        [SwaggerOperation(Description = " This route is used to provide event registration by Admin, Core or Editor. ")]
+        [HttpPost("admin")]
+        public async Task<ActionResult<RegistrationForViewDto>> AddRegistrationByAdmin(DataForRegistrationByAdminDto data)
+        {
+            return Ok(await _repo.Register(data.ExcelId, data.EventId));
+        }
+        
+        [Authorize(Roles = "Admin, Core, Editor")]
+        [SwaggerOperation(Description = " This route is delete an user registration by Admin, Core or Editor. ")]
+        [HttpDelete("admin")]
+        public async Task<ActionResult<RegistrationForViewDto>> RemoveRegistration(DataForRegistrationByAdminDto data)
+        {
+            return Ok(await _repo.RemoveRegistration(data.ExcelId, data.EventId));
         }
         
         [Authorize(Roles = "Admin, Core, Editor, Staff")]
@@ -62,5 +79,7 @@ namespace API.Controllers
         {
             return Ok( await _repo.UserList(int.Parse(eventId)));
         }
+        
+        
     }
 }
