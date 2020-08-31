@@ -34,7 +34,7 @@ namespace API.Controllers
         
         [SwaggerOperation(Description = " This route is used to provide event registration. ")]
         [HttpPost]
-        public async Task<ActionResult<Registration>> Register(DataFromClientDto data)
+        public async Task<ActionResult<RegistrationForViewDto>> AddRegistration(DataForRegistrationByUserDto data)
         {
             var excelId = int.Parse(User.Claims.First(i => i.Type == "user_id").Value);
             return Ok(await _repo.Register(excelId, data.Id));
@@ -43,7 +43,7 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is used to clear a user's data from registration table when the user account is deleted. Only admins can access this route. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
-        public async Task<ActionResult<List<Registration>>> ClearUserData(DataFromClientDto data)
+        public async Task<ActionResult<List<RegistrationForViewDto>>> ClearUserData(DataForRegistrationByUserDto data)
         {
             return Ok(await _repo.ClearUserData(data.Id));
         }
@@ -57,18 +57,17 @@ namespace API.Controllers
         }
         
         [Authorize(Roles = "Admin, Core, Editor")]
-        [SwaggerOperation(Description = " This route is used to provide event registration by privileged users( Admin, Core, Editor). ")]
+        [SwaggerOperation(Description = " This route is used to provide event registration by Admin, Core or Editor. ")]
         [HttpPost("admin")]
-        public async Task<ActionResult<Registration>> RegistrationForPrivilegedUser(DataFromPrivilegedUserDto data)
+        public async Task<ActionResult<RegistrationForViewDto>> AddRegistrationByAdmin(DataForRegistrationDto data)
         {
-            Console.WriteLine("I am admin");
             return Ok(await _repo.Register(data.ExcelId, data.EventId));
         }
         
         [Authorize(Roles = "Admin, Core, Editor")]
-        [SwaggerOperation(Description = " This route is delete an user registration by privileged users( Admin, Core, Editor). ")]
+        [SwaggerOperation(Description = " This route is delete an user registration by Admin, Core or Editor. ")]
         [HttpDelete("admin")]
-        public async Task<ActionResult<Registration>> RemoveRegistration(DataFromPrivilegedUserDto data)
+        public async Task<ActionResult<RegistrationForViewDto>> RemoveRegistration(DataForRegistrationDto data)
         {
             return Ok(await _repo.RemoveRegistration(data.ExcelId, data.EventId));
         }

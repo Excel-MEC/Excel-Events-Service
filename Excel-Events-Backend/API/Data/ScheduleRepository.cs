@@ -66,7 +66,7 @@ namespace API.Data
                 .ToList();
         }
 
-        public async Task<ScheduleViewDto> AddSchedule(DataForScheduleDto dataFromClient)
+        public async Task<ScheduleForViewDto> AddSchedule(DataForScheduleDto dataFromClient)
         {
             var eventFromDb = await _context.Events.Include(e => e.Rounds)
                 .FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
@@ -82,10 +82,10 @@ namespace API.Data
 
             await _context.Rounds.AddAsync(newRound);
             await _context.SaveChangesAsync();
-            return _mapper.Map<ScheduleViewDto>(newRound);
+            return _mapper.Map<ScheduleForViewDto>(newRound);
         }
 
-        public async Task<ScheduleViewDto> UpdateSchedule(DataForScheduleDto dataFromClient)
+        public async Task<ScheduleForViewDto> UpdateSchedule(DataForScheduleDto dataFromClient)
         {
             var eventFromSchedule = await _context.Rounds.FirstOrDefaultAsync(e =>
                 e.EventId == dataFromClient.EventId && e.RoundId == dataFromClient.RoundId);
@@ -99,10 +99,10 @@ namespace API.Data
             }
 
             await _context.SaveChangesAsync();
-            return _mapper.Map<ScheduleViewDto>(eventFromSchedule);
+            return _mapper.Map<ScheduleForViewDto>(eventFromSchedule);
         }
 
-        public async Task<ScheduleViewDto> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
+        public async Task<ScheduleForViewDto> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
         {
             var eventFromSchedule = await _context.Rounds.FirstOrDefaultAsync(e =>
                 e.EventId == dataFromClient.EventId && e.RoundId == dataFromClient.RoundId);
@@ -115,7 +115,7 @@ namespace API.Data
             }
 
             await _context.SaveChangesAsync();
-            return _mapper.Map<ScheduleViewDto>(eventFromSchedule);
+            return _mapper.Map<ScheduleForViewDto>(eventFromSchedule);
         }
     }
 }

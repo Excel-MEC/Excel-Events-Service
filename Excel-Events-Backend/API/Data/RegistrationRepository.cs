@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
+using API.Dtos.Registration;
 using API.Extensions.CustomExceptions;
 using API.Models;
 using AutoMapper;
@@ -21,13 +22,13 @@ namespace API.Data
             _context = context;
         }
 
-        public async Task<List<Registration>> ClearUserData(int excelId)
+        public async Task<List<RegistrationForViewDto>> ClearUserData(int excelId)
         {
             var registeredEventList = await _context.Registrations.Where(r => r.ExcelId == excelId).ToListAsync();
             if(registeredEventList.Count == 0) throw new DataInvalidException("Invalid excel ID. Please re-check the excel ID");
             _context.RemoveRange(registeredEventList);
             await _context.SaveChangesAsync();
-            return registeredEventList;
+            return registeredEventList.Select(x=>_mapper.Map<RegistrationForViewDto>(x)).ToList();
         }
 
         public async Task<List<EventForListViewDto>> EventList(int excelId)
@@ -44,16 +45,16 @@ namespace API.Data
             return success != null;
         }
 
-        public async Task<Registration> RemoveRegistration(int excelId, int eventId)
+        public async Task<RegistrationForViewDto> RemoveRegistration(int excelId, int eventId)
         {
             var registration = await _context.Registrations.FirstOrDefaultAsync(x => x.ExcelId == excelId && x.EventId == eventId);
             if(registration == null) throw new DataInvalidException("Invalid excel ID or event ID");
             _context.Remove(registration);
             await _context.SaveChangesAsync();
-            return registration;
+            return _mapper.Map<RegistrationForViewDto>(registration);
         }
 
-        public async Task<Registration> Register(int excelId, int eventId)
+        public async Task<RegistrationForViewDto> Register(int excelId, int eventId)
         {
             if(await HasRegistered(excelId,eventId)) throw new OperationInvalidException("Already registered for the event.");
             var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
@@ -61,7 +62,7 @@ namespace API.Data
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync() ;
-            return newRegistration;
+            return _mapper.Map<RegistrationForViewDto>(newRegistration);
         }
 
         public async Task<List<int>> UserList(int eventId)

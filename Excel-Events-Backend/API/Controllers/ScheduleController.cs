@@ -31,7 +31,7 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for adding a round(schedule). Only admins can access these routes. ")]
         [Authorize(Roles = "Admin, Core, Editor ")]
         [HttpPost]   
-        public async Task<ActionResult<Schedule>> AddSchedule(DataForScheduleDto data)
+        public async Task<ActionResult<ScheduleForViewDto>> AddSchedule(DataForScheduleDto data)
         {    
             return Ok(await _repo.AddSchedule(data));
         }
@@ -39,7 +39,7 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for modifying the schedule. Only admins can access these routes.")]
         [Authorize(Roles = "Admin, Core, Editor ")]
         [HttpPut]   
-        public async Task<ActionResult<Schedule>> UpdateSchedule(DataForScheduleDto dataFromClient)
+        public async Task<ActionResult<ScheduleForViewDto>> UpdateSchedule(DataForScheduleDto dataFromClient)
         {    
             return Ok(await _repo.UpdateSchedule(dataFromClient));
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         [SwaggerOperation(Description = " This route is for deleting the schedule. Only admins can access these routes. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]   
-        public async Task<ActionResult<Schedule>> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
+        public async Task<ActionResult<ScheduleForViewDto>> RemoveSchedule(DataForDeletingScheduleDto dataFromClient)
         {    
             return Ok(await _repo.RemoveSchedule(dataFromClient));
         }

@@ -3,7 +3,7 @@ using API.Models.Custom;
 
 namespace API.Dtos.Schedule
 {
-    public class ScheduleViewDto
+    public class ScheduleForViewDto
     {
         public int Id { get; set; }
         public int EventId { get; set; }
