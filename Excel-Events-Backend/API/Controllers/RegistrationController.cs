@@ -75,7 +75,7 @@ namespace API.Controllers
         [Authorize(Roles = "Admin, Core, Editor, Staff")]
         [SwaggerOperation(Description = " This route is used to return a list of userIds of the users who registered for an event. Only admins can access this route. ")]
         [HttpGet("{eventId}/users")]
-        public async Task<ActionResult<List<int>>> UserList(string eventId)
+        public async Task<ActionResult<List<UserForViewDto>>> UserList(string eventId)
         {
             return Ok( await _repo.UserList(int.Parse(eventId)));
         }
