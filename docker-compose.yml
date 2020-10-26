@@ -24,6 +24,8 @@ services:
       - CLOUD_STORAGE_URL=${CLOUD_STORAGE_URL}
       - API_PREFIX=${API_PREFIX}
       - SECRET_KEY=${SECRET_KEY}
+      - ACCOUNTS_HOST=${ACCOUNTS_HOST}
+      - SERVICE_KEY=${SERVICE_KEY}
     volumes:
       - /api/obj
       - /api/bin
