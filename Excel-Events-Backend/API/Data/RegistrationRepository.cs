@@ -19,11 +19,13 @@ namespace API.Data
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly IEventRepository _eventRepo;
 
-        public RegistrationRepository(DataContext context, IMapper mapper)
+        public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo)
         {
             _mapper = mapper;
             _context = context;
+            _eventRepo = eventRepo;
         }
 
         public async Task<List<RegistrationForViewDto>> ClearUserData(int excelId)
@@ -65,7 +67,7 @@ namespace API.Data
         {
             if (await HasRegistered(excelId, eventId))
                 throw new OperationInvalidException("Already registered for the event.");
-            var eventToRegister = await _context.Events.FirstOrDefaultAsync(x => x.Id == eventId);
+            var eventToRegister = await _eventRepo.GetEvent(eventId);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(newRegistration);

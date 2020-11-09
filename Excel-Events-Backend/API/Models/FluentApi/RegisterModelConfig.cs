@@ -15,6 +15,11 @@ namespace API.Models.FluentApi
                 .WithMany(e => e.Registrations)
                 .HasForeignKey(r => r.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Registration>()
+                .HasOne(r => r.Team)
+                .WithMany(t => t.Registrations)
+                .HasForeignKey(t => t.TeamId);
         }
     }
 }
