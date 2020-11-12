@@ -34,10 +34,10 @@ namespace API.Controllers
         
         [SwaggerOperation(Description = " This route is for bookmarking an event. ")]
         [HttpPost]
-        public async Task<ActionResult<Bookmark>> Add(DataForRegistrationDto data)
+        public async Task<ActionResult<Bookmark>> Add(DataForRegistrationDto dataForRegistration)
         {
             var excelId = int.Parse(this.User.Claims.First(i => i.Type == "user_id").Value);
-            return Ok( await _repo.Add(excelId, data.Id));
+            return Ok( await _repo.Add(excelId, dataForRegistration.EventId));
         }
 
         [SwaggerOperation(Description = " This route is to remove a bookmarked event by the user. ")]

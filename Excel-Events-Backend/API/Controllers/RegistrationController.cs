@@ -34,18 +34,18 @@ namespace API.Controllers
         
         [SwaggerOperation(Description = " This route is used to provide event registration. ")]
         [HttpPost]
-        public async Task<ActionResult<RegistrationForViewDto>> AddRegistration(DataForRegistrationDto data)
+        public async Task<ActionResult<RegistrationForViewDto>> AddRegistration(DataForRegistrationDto dataForRegistration)
         {
             var excelId = int.Parse(User.Claims.First(i => i.Type == "user_id").Value);
-            return Ok(await _repo.Register(excelId, data.Id));
+            return Ok(await _repo.Register(excelId, dataForRegistration));
         }
 
         [SwaggerOperation(Description = " This route is used to clear a user's data from registration table when the user account is deleted. Only admins can access this route. ")]
         [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
-        public async Task<ActionResult<List<RegistrationForViewDto>>> ClearUserData(DataForRegistrationDto data)
+        public async Task<ActionResult<List<RegistrationForViewDto>>> ClearUserData(DataForClearingUserRegistrationDto dataForClearingUserRegistration)
         {
-            return Ok(await _repo.ClearUserData(data.Id));
+            return Ok(await _repo.ClearUserData(dataForClearingUserRegistration));
         }
 
         [SwaggerOperation(Description = " This route is used to check whether a user has registered for an event or not. ")]
@@ -61,15 +61,15 @@ namespace API.Controllers
         [HttpPost("admin")]
         public async Task<ActionResult<RegistrationForViewDto>> AddRegistrationByAdmin(DataForRegistrationByAdminDto data)
         {
-            return Ok(await _repo.Register(data.ExcelId, data.EventId));
+            return Ok(await _repo.Register(data.ExcelId, data.RegistrationData));
         }
         
         [Authorize(Roles = "Admin, Core, Editor")]
         [SwaggerOperation(Description = " This route is delete an user registration by Admin, Core or Editor. ")]
         [HttpDelete("admin")]
-        public async Task<ActionResult<RegistrationForViewDto>> RemoveRegistration(DataForRegistrationByAdminDto data)
+        public async Task<ActionResult<RegistrationForViewDto>> RemoveRegistration(DataForRemovingRegistrationByAdminDto dataForRemovingRegistrationByAdmin)
         {
-            return Ok(await _repo.RemoveRegistration(data.ExcelId, data.EventId));
+            return Ok(await _repo.RemoveRegistration(dataForRemovingRegistrationByAdmin.ExcelId, dataForRemovingRegistrationByAdmin.EventId));
         }
         
         [Authorize(Roles = "Admin, Core, Editor, Staff")]
