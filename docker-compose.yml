@@ -26,6 +26,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - ACCOUNTS_HOST=${ACCOUNTS_HOST}
       - SERVICE_KEY=${SERVICE_KEY}
+      - GOOGLE_CREDENTIAL=${GOOGLE_CREDENTIAL}
     volumes:
       - /api/obj
       - /api/bin

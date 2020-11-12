@@ -25,5 +25,6 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - ACCOUNT_HOST=${ACCOUNT_HOST}
       - SERVICE_KEY=${SERVICE_KEY}
+      - GOOGLE_CREDENTIAL=${GOOGLE_CREDENTIAL}
     ports:
       - '5000:5000'
