@@ -1,3 +1,4 @@
+using System;
 using API.Services;
 using API.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,9 @@ namespace API.Extensions
     {
         public static void AddCustomServices(this IServiceCollection services)
         {
+            // Add Environment Service
+            services.AddSingleton<IEnvironmentService, EnvironmentService>();
+            
             // Add Google Cloud Storage
             services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
 

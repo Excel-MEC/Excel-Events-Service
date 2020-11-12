@@ -10,6 +10,7 @@ using API.Dtos.Event;
 using API.Dtos.Registration;
 using API.Extensions.CustomExceptions;
 using API.Models;
+using API.Services.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,12 +21,14 @@ namespace API.Data
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IEventRepository _eventRepo;
+        private readonly IEnvironmentService _env;
 
-        public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo)
+        public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo, IEnvironmentService env)
         {
             _mapper = mapper;
             _context = context;
             _eventRepo = eventRepo;
+            _env = env;
         }
         
 
@@ -88,9 +91,9 @@ namespace API.Data
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("ServiceAuthorization",
-                        Environment.GetEnvironmentVariable("SERVICE_KEY"));
+                        _env.ServiceKey);
                     var response = await client.PostAsync(
-                        $"{Environment.GetEnvironmentVariable("ACCOUNTS_HOST")}/api/admin/users",
+                        $"{_env.AccountsHost}/api/admin/users",
                         new StringContent(JsonSerializer.Serialize(ids), Encoding.UTF8, "application/json"));
                     var responseString = await response.Content.ReadAsStringAsync();
                     users = JsonSerializer.Deserialize<List<UserForViewDto>>(responseString);

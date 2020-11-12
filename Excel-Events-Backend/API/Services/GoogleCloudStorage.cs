@@ -15,12 +15,14 @@ namespace API.Services
         private readonly GoogleCredential googleCredential;
         private readonly StorageClient storageClient;
         private readonly string bucketName;
+        private readonly IEnvironmentService _env;
 
-        public GoogleCloudStorage()
+        public GoogleCloudStorage(IEnvironmentService env)
         {
-            googleCredential = GoogleCredential.FromFile(Environment.GetEnvironmentVariable("GOOGLE_CREDENTIAL_FILE"));
+            _env = env;
+            googleCredential = GoogleCredential.FromJson(_env.GoogleCredential);
             storageClient = StorageClient.Create(googleCredential);
-            bucketName = Environment.GetEnvironmentVariable("GOOGLE_CLOUD_STORAGE_BUCKET");
+            bucketName = _env.GoogleCloudStorageBucket;
         }
 
         public async Task<string> UploadFileAsync(IFormFile imageFile, string fileNameForStorage)
@@ -29,8 +31,8 @@ namespace API.Services
             {
                 await imageFile.CopyToAsync(memoryStream);
                 var dataObject = await storageClient.UploadObjectAsync(bucketName, fileNameForStorage, null, memoryStream);
-                dataObject.Acl = dataObject.Acl ?? new List<ObjectAccessControl>();
-                storageClient.UpdateObject(dataObject, new UpdateObjectOptions
+                dataObject.Acl ??= new List<ObjectAccessControl>();
+                await storageClient.UpdateObjectAsync(dataObject, new UpdateObjectOptions
                 {
                     PredefinedAcl = PredefinedObjectAcl.PublicRead
                 });

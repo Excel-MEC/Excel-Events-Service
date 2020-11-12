@@ -3,6 +3,7 @@ using API.Data;
 using API.Extensions;
 using API.Helpers;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,8 @@ namespace API
         {
             // Add Controllers
             services.AddControllers().AddNewtonsoftJson(AppDomainManagerInitializationOptions =>
-                AppDomainManagerInitializationOptions.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                AppDomainManagerInitializationOptions.SerializerSettings.ReferenceLoopHandling =
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             // Add Database to the Services
             services.AddDbContext<DataContext>(options =>
@@ -37,17 +39,33 @@ namespace API
             });
 
             // Add Automapper to map objects of different types
-            services.AddAutoMapper(opt =>
-            {
-                opt.AddProfile(new AutoMapperProfiles());
-            });
+            services.AddAutoMapper(opt => { opt.AddProfile(new AutoMapperProfiles()); });
 
             // Adding Swagger for Documentation
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Excel Events", Version = "v 1.0" });
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Excel Events", Version = "v 1.0"});
                 c.DocumentFilter<SwaggerPathPrefix>(Environment.GetEnvironmentVariable("API_PREFIX"));
                 c.EnableAnnotations();
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "JWT Authentication",
+                    Description = "Enter JWT Bearer token **_only_**",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer", // must be lower case
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {securityScheme, new string[] { }}
+                });
             });
 
             // Adding Custom Services
@@ -57,8 +75,8 @@ namespace API
             services.AddRepositoryServices();
 
 
-            services.AddAuthentication("Basic").AddScheme<BasicAuthenticationOptions, CustomAuthenticationHandler>("Basic", null);
-
+            services.AddAuthentication("Basic")
+                .AddScheme<BasicAuthenticationOptions, CustomAuthenticationHandler>("Basic", null);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,7 +107,9 @@ namespace API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json", "Excel Events");
+                c.SwaggerEndpoint(
+                    "/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json",
+                    "Excel Events");
             });
 
             // Add CORS
@@ -107,10 +127,7 @@ namespace API
             app.ConfigureExceptionHandlerMiddleware();
 
             // Middleware for Specifying Endpoints
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
