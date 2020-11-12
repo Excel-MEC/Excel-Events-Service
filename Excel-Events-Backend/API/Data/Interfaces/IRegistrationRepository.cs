@@ -9,8 +9,8 @@ namespace API.Data.Interfaces
 {
     public interface IRegistrationRepository
     {
-        Task<RegistrationForViewDto> Register(int excelId, int eventId);
-        Task<List<RegistrationForViewDto>> ClearUserData(int excelId);
+        Task<RegistrationForViewDto> Register(int excelId, DataForRegistrationDto dataForRegistration);
+        Task<List<RegistrationForViewDto>> ClearUserData(DataForClearingUserRegistrationDto dataForClearingUserRegistration);
         Task<List<EventForListViewDto>> EventList(int excelId);
         Task<List<UserForViewDto>> UserList(int eventId);
         Task<bool> HasRegistered(int excelId, int eventId);

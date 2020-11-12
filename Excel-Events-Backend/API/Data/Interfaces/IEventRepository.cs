@@ -12,6 +12,7 @@ namespace API.Data.Interfaces
         Task<List<EventForListViewDto>> EventListOfType(int id);
         Task<List<EventForListViewDto>> EventListOfCategory(int id);
         Task<EventForDetailedViewDto> GetEvent(int id);  
+        Task<Event> GetEventWithTeam(int eventId, int teamId);  
         Task<Event> AddEvent(DataForAddingEventDto newEvent);
         Task<Event> UpdateEvent(DataForUpdatingEventDto newEvent);
         Task<Event> DeleteEvent(DataForDeletingEventDto dataForDeletingEvent);

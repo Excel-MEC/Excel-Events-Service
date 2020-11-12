@@ -58,6 +58,11 @@ namespace API.Data
             return _mapper.Map<EventForDetailedViewDto>(eventFromdb);
         }
 
+        public async Task<Event> GetEventWithTeam(int eventId, int teamId)
+        {
+            return await _context.Events.Include(e => e.Registrations.Where(r => r.TeamId == teamId)).FirstOrDefaultAsync(e => e.Id == eventId);
+        }
+
         public async Task<Event> AddEvent(DataForAddingEventDto eventDataFromClient)
         {
             if (eventDataFromClient.Icon is null)
