@@ -23,21 +23,23 @@ namespace API.Data
         private readonly IEventRepository _eventRepo;
         private readonly IEnvironmentService _env;
 
-        public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo, IEnvironmentService env)
+        public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo,
+            IEnvironmentService env)
         {
             _mapper = mapper;
             _context = context;
             _eventRepo = eventRepo;
             _env = env;
         }
-        
+
 
         public async Task<RegistrationForViewDto> Register(int excelId, DataForRegistrationDto dataForRegistration)
         {
             if (await HasRegistered(excelId, dataForRegistration.EventId))
                 throw new OperationInvalidException("Already registered for the event.");
             if (dataForRegistration.TeamId != null)
-                return await RegisterWithTeam(excelId, dataForRegistration.EventId, Convert.ToInt32(dataForRegistration.TeamId));
+                return await RegisterWithTeam(excelId, dataForRegistration.EventId,
+                    Convert.ToInt32(dataForRegistration.TeamId));
             var eventToRegister = await _eventRepo.GetEvent(dataForRegistration.EventId);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
             if (eventToRegister.IsTeam) throw new DataInvalidException("Need team Id to register for team event.");
@@ -48,9 +50,11 @@ namespace API.Data
         }
 
 
-        public async Task<List<RegistrationForViewDto>> ClearUserData(DataForClearingUserRegistrationDto dataForClearingUserRegistration)
+        public async Task<List<RegistrationForViewDto>> ClearUserData(
+            DataForClearingUserRegistrationDto dataForClearingUserRegistration)
         {
-            var registeredEventList = await _context.Registrations.Where(r => r.ExcelId == dataForClearingUserRegistration.ExcelId).ToListAsync();
+            var registeredEventList = await _context.Registrations
+                .Where(r => r.ExcelId == dataForClearingUserRegistration.ExcelId).ToListAsync();
             if (registeredEventList.Count == 0)
                 throw new DataInvalidException("Invalid excel ID. Please re-check the excel ID");
             _context.RemoveRange(registeredEventList);
@@ -82,6 +86,7 @@ namespace API.Data
             await _context.SaveChangesAsync();
             return _mapper.Map<RegistrationForViewDto>(registration);
         }
+
         public async Task<List<UserForViewDto>> UserList(int eventId)
         {
             var registrations = await _context.Registrations.Where(x => x.EventId == eventId).ToListAsync();
@@ -98,21 +103,20 @@ namespace API.Data
                     var responseString = await response.Content.ReadAsStringAsync();
                     users = JsonSerializer.Deserialize<List<UserForViewDto>>(responseString);
                 }
-
             return users;
         }
-        
+
         private async Task<RegistrationForViewDto> RegisterWithTeam(int excelId, int eventId, int teamId)
         {
             var eventToRegister = await _eventRepo.GetEventWithTeam(eventId, teamId);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
             if (!eventToRegister.IsTeam) throw new DataInvalidException("Given event is not team event");
-            if(eventToRegister.TeamSize >= eventToRegister.Registrations.Count) throw new DataInvalidException("Team is full");
-            var newRegistration = new Registration {EventId =eventId, ExcelId = excelId, TeamId = teamId};
+            if (eventToRegister.TeamSize < eventToRegister.Registrations.Count)
+                throw new DataInvalidException("Team is full");
+            var newRegistration = new Registration {EventId = eventId, ExcelId = excelId, TeamId = teamId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync();
             return _mapper.Map<RegistrationForViewDto>(newRegistration);
         }
-
     }
 }

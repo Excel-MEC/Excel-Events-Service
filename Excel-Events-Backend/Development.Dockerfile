@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine3.12
+RUN export DOTNET_USE_POLLING_FILE_WATCHER=true
 WORKDIR /api
 COPY ./API/*.csproj ./
 RUN dotnet restore --disable-parallel
