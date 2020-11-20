@@ -16,7 +16,9 @@ namespace API.Helpers
             CreateMap<DataForAddingEventDto, Event>();
             CreateMap<DataForScheduleDto, Schedule>();
             CreateMap<Event, EventForListViewDto>();
-            CreateMap<Event, EventForDetailedViewDto>();
+            CreateMap<Event, EventForDetailedViewDto>().
+                ForMember(dest => dest.Rounds, opt => opt.MapFrom(src => src.Rounds));
+            CreateMap<Schedule, EventRoundForViewDto>();
             CreateMap<DataForUpdatingEventDto, Event>()
                 .ForMember(dest => dest.Icon, opt => opt.Ignore());
             CreateMap<Event, EventForBookmarkListViewDto>();
