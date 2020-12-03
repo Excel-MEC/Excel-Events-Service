@@ -58,6 +58,7 @@ namespace API.Data
                     Icon = e.Event.Icon,
                     EventType = e.Event.EventType,
                     Category = e.Event.Category,
+                    Venue = e.Event.Venue,
                     Round = e.Round,
                     Datetime = e.Datetime,
                     Day = e.Day,
