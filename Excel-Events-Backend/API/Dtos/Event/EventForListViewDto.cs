@@ -9,6 +9,7 @@ namespace API.Dtos.Event
         public string Icon { get; set; }
         public string EventType { get; set; }
         public string Category { get; set; }
+        public string Venue { get; set; }
         public bool? NeedRegistration { get; set; }
         public int Day { get; set; }
         public DateTime Datetime { get; set; }
