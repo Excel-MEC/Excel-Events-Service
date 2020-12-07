@@ -48,14 +48,24 @@ namespace API.Controllers
             return Ok(await _repo.ClearUserData(dataForClearingUserRegistration));
         }
 
-        [SwaggerOperation(Description = " This route is used to check whether a user has registered for an event or not. ")]
+        [SwaggerOperation(Description =
+            " This route is used to check whether a user has registered for an event or not. ")]
         [HttpGet("{eventId}")]
         public async Task<ActionResult<bool>> HasRegistered(string eventId)
         {
             var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
             return Ok(await _repo.HasRegistered(excelId, int.Parse(eventId)));
         }
-        
+
+        [SwaggerOperation(Description =
+            " This route is used to change the registered team.")]
+        [HttpPut("team")]
+        public async Task<ActionResult<bool>> ChangeTeam(DataForRegistrationDto dataForRegistration)
+        {
+            var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
+            return Ok(await _repo.ChangeTeam(excelId, dataForRegistration));
+        }
+
         [Authorize(Roles = "Admin, Core, Editor")]
         [SwaggerOperation(Description = " This route is used to provide event registration by Admin, Core or Editor. ")]
         [HttpPost("admin")]
