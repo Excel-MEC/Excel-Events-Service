@@ -10,6 +10,7 @@ using API.Dtos.Event;
 using API.Dtos.Registration;
 using API.Extensions.CustomExceptions;
 using API.Models;
+using API.Models.Custom;
 using API.Services.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -87,6 +88,25 @@ namespace API.Data
             return _mapper.Map<RegistrationForViewDto>(registration);
         }
 
+        public async Task<RegistrationForViewDto> ChangeTeam(int excelId, DataForRegistrationDto dataForRegistration)
+        {
+            var eventWithTeams = await _eventRepo.GetEventWithTeam(dataForRegistration.EventId,
+                Convert.ToInt32(dataForRegistration.TeamId));
+            if(eventWithTeams.EventStatusId != 1) throw new DataInvalidException("Event has started");
+            if (eventWithTeams.Registrations.Count < eventWithTeams.TeamSize)
+            {
+                var registration = await _context.Registrations.FirstOrDefaultAsync(r =>
+                    r.EventId == dataForRegistration.EventId && r.ExcelId == excelId);
+                registration.TeamId = dataForRegistration.TeamId;
+                await _context.SaveChangesAsync();
+                registration.Team = await _context.Teams.AsNoTracking()
+                    .FirstOrDefaultAsync(team => team.Id == dataForRegistration.TeamId);
+                return _mapper.Map<RegistrationForViewDto>(registration);
+            }
+
+            throw new DataInvalidException("Team is full");
+        }
+
         public async Task<List<UserForViewDto>> UserList(int eventId)
         {
             var registrations = await _context.Registrations.Where(x => x.EventId == eventId).ToListAsync();
@@ -103,6 +123,7 @@ namespace API.Data
                     var responseString = await response.Content.ReadAsStringAsync();
                     users = JsonSerializer.Deserialize<List<UserForViewDto>>(responseString);
                 }
+
             return users;
         }
 
@@ -116,6 +137,7 @@ namespace API.Data
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId, TeamId = teamId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync();
+            newRegistration.Team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
             return _mapper.Map<RegistrationForViewDto>(newRegistration);
         }
     }
