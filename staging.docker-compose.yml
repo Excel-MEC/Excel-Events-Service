@@ -30,3 +30,18 @@ services:
       - ISSUER=${ISSUER}
     ports:
       - '5000:5000'
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - ../cert/:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www/html --email platform.excelmec@gmail.com --agree-tos --no-eff-email -d staging.events.excelmec.org
+
+volumes:
+  certbot-etc:
+  certbot-var:
