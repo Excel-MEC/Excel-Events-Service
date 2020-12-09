@@ -26,5 +26,7 @@ services:
       - ACCOUNTS_HOST=${ACCOUNTS_HOST}
       - SERVICE_KEY=${SERVICE_KEY}
       - GOOGLE_CREDENTIAL=${GOOGLE_CREDENTIAL}
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - ISSUER=${ISSUER}
     ports:
       - '5000:5000'

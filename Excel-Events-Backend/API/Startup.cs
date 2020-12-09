@@ -75,26 +75,20 @@ namespace API
             services.AddRepositoryServices();
 
 
-            services.AddAuthentication("Basic")
-                .AddScheme<BasicAuthenticationOptions, CustomAuthenticationHandler>("Basic", null);
+
+            services.AddAuthentication("JwtAuthentication")
+                .AddScheme<BasicAuthenticationOptions, CustomAuthenticationHandler>("JwtAuthentication", null);
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ServiceAccount", policy => policy.RequireClaim("ServiceAccount"));
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.Use(async (context, next) =>
-            {
-                string secretKey = context.Request.Headers["SecretKey"];
-                if (secretKey == Environment.GetEnvironmentVariable("SECRET_KEY") && !string.IsNullOrEmpty(secretKey))
-                {
-                    await next();
-                }
-                else
-                {
-                    context.Response.StatusCode = 403;
-                    await context.Response.CompleteAsync();
-                }
-            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
