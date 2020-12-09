@@ -13,6 +13,8 @@ namespace API.Services
         public string SecretKey { get; }
         public string AccountsHost { get; }
         public string ServiceKey { get; }
+        public string AccessToken { get; }
+        public string Issuer { get; }
         public string GoogleCredential { get; }
         public EnvironmentService()
         {
@@ -23,6 +25,8 @@ namespace API.Services
              SecretKey = Environment.GetEnvironmentVariable("SECRET_KEY");
              AccountsHost = Environment.GetEnvironmentVariable("ACCOUNTS_HOST");
              ServiceKey = Environment.GetEnvironmentVariable("SERVICE_KEY");
+             AccessToken = Environment.GetEnvironmentVariable("ACCESS_TOKEN");
+             Issuer = Environment.GetEnvironmentVariable("ISSUER");
              GoogleCredential = Encoding.UTF8.GetString(Convert.FromBase64String(Environment.GetEnvironmentVariable("GOOGLE_CREDENTIAL")!)) ;
         }
     }

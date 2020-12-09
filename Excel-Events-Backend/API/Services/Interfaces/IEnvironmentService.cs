@@ -9,6 +9,8 @@
         public string SecretKey { get; }
         public string AccountsHost { get; }
         public string ServiceKey { get; }
+        public string AccessToken { get; }
+        public string Issuer { get; }
         public string GoogleCredential { get; }
     }
 }
