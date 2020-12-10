@@ -39,7 +39,7 @@ deploy:
     - master@excel-mec/excel-events/excel-events-service
 
 production:
-  stage: prod
+  stage: production
   image: google/cloud-sdk
   script:
     - gcloud builds submit -t $GCR_URL:staging
