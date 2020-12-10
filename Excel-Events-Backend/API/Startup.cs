@@ -99,12 +99,14 @@ namespace API
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint(
-                    "/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json",
-                    "Excel Events");
-            });
+            if(Environment.GetEnvironmentVariable("ENV") != "Production"){
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint(
+                        "/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json",
+                        "Excel Events");
+                });
+            }
 
             // Add CORS
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
