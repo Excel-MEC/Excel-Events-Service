@@ -43,6 +43,7 @@ production:
   image: google/cloud-sdk
   script:
     - echo "$GOOGLE_KEY_SECRET" > key.json #Service account key
+    - cd Excel-Events-Backend
     - gcloud auth activate-service-account --key-file key.json
     - gcloud config set project $GCP_PROJECT
     - gcloud builds submit -t $GCR_URL:staging
