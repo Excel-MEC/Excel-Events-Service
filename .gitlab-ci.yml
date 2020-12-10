@@ -46,6 +46,6 @@ production:
     - gcloud auth activate-service-account --key-file key.json
     - gcloud config set project $GCP_PROJECT
     - cd Excel-Events-Backend
-    - gcloud builds submit -t $GCR_URL:staging
+    - gcloud builds submit -t $GCR_URL:latest
   only:
     - prod@excel-mec/excel-events/excel-events-service
