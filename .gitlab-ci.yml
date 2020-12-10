@@ -36,3 +36,11 @@ deploy:
     - ssh $DEVELOPMENT_SERVER_USERNAME@$DEVELOPMENT_SERVER_IP 'cd /home/excel/Excel-Events-Service; docker-compose -f staging.docker-compose.yml down; docker-compose -f staging.docker-compose.yml pull; docker-compose -f staging.docker-compose.yml up -d'
   only:
     - master@excel-mec/excel-events/excel-events-service
+
+production:
+  stage: prod
+  image: google/cloud-sdk
+  script:
+    - gcloud builds submit -t $GCR_URL:staging
+  only:
+    - prod@excel-mec/excel-events/excel-events-service
