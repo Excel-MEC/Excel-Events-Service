@@ -5,6 +5,7 @@ stages:
   - test
   - build
   - deploy
+  - production
 test:
   stage: test
   script:
