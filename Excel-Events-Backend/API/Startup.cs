@@ -101,11 +101,9 @@ namespace API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                if(Environment.GetEnvironmentVariable("ENV") != "Production"){
-                    c.SwaggerEndpoint(
-                        "/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json",
-                        "Excel Events");
-                }
+                c.SwaggerEndpoint(
+                    "/" + Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json",
+                    "Excel Events");
             });
 
             // Add CORS
