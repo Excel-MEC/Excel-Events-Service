@@ -19,7 +19,7 @@ namespace API.Helpers
             {
                 var pathToChange = swaggerDoc.Paths[path];
                 swaggerDoc.Paths.Remove(path);
-                swaggerDoc.Paths.Add("/" + _pathPrefix + path, pathToChange);
+                swaggerDoc.Paths.Add(_pathPrefix + path, pathToChange);
             }
         }
     }
