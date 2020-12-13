@@ -41,7 +41,7 @@ namespace API.Data
             if (dataForRegistration.TeamId != null)
                 return await RegisterWithTeam(excelId, dataForRegistration.EventId,
                     Convert.ToInt32(dataForRegistration.TeamId));
-            var eventToRegister = await _eventRepo.GetEvent(dataForRegistration.EventId);
+            var eventToRegister = await _eventRepo.GetEvent(dataForRegistration.EventId, null);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
             if (eventToRegister.IsTeam) throw new DataInvalidException("Need team Id to register for team event.");
             var newRegistration = new Registration {EventId = dataForRegistration.EventId, ExcelId = excelId};

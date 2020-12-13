@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Event;
@@ -58,7 +59,12 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EventForDetailedViewDto>> GetEvent(int id)
         {
-            var eventFromRepo = await _repo.GetEvent(id);
+            int? excelId = null;
+            if (User.Identity.IsAuthenticated)
+            {
+                excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
+            }
+            var eventFromRepo = await _repo.GetEvent(id, excelId);
             return Ok(eventFromRepo);
         }
         

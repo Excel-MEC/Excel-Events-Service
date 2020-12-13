@@ -34,5 +34,6 @@ namespace API.Dtos.Event
         public int? CurrentRound { get; set; }
         public bool? NeedRegistration { get; set; }
         public List<EventRoundForViewDto> Rounds { get; set; }
+        public Models.Registration Registration { get; set; }
     }
 }
