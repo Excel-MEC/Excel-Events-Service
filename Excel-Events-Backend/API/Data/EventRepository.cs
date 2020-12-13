@@ -50,12 +50,20 @@ namespace API.Data
             return filteredEvents.Select(e => _mapper.Map<EventForListViewDto>(e)).ToList();
         }
 
-        public async Task<EventForDetailedViewDto> GetEvent(int id)
+        public async Task<EventForDetailedViewDto> GetEvent(int id, int? excelId)
         {
             var eventFromdb = await _context.Events.Include(e => e.Rounds)
                 .Include(e => e.EventHead1).Include(e => e.EventHead2)
                 .FirstOrDefaultAsync(e => e.Id == id);
-            return _mapper.Map<EventForDetailedViewDto>(eventFromdb);
+            var eventForView = _mapper.Map<EventForDetailedViewDto>(eventFromdb);
+            if (excelId != null)
+            {
+                eventForView.Registration =
+                    await _context.Registrations.FirstOrDefaultAsync(registration => registration.ExcelId == excelId && registration.EventId==eventForView.Id);
+                eventForView.Registration.Event = null;
+            }
+
+            return eventForView;
         }
 
         public async Task<Event> GetEventWithTeam(int eventId, int teamId)
