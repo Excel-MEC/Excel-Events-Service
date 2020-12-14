@@ -60,7 +60,6 @@ namespace API.Data
             {
                 eventForView.Registration =
                     await _context.Registrations.FirstOrDefaultAsync(registration => registration.ExcelId == excelId && registration.EventId==eventForView.Id);
-                eventForView.Registration.Event = null;
             }
 
             return eventForView;
