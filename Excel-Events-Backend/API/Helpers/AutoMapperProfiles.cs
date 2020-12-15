@@ -3,6 +3,7 @@ using API.Dtos.Event;
 using API.Dtos.EventHeads;
 using API.Dtos.Registration;
 using API.Dtos.Schedule;
+using API.Dtos.Teams;
 using API.Models;
 using AutoMapper;
 
@@ -28,6 +29,7 @@ namespace API.Helpers
             CreateMap<Schedule, ScheduleForViewDto>();
             CreateMap<Bookmark, BookmarkForViewDto>();
             CreateMap<Registration, RegistrationForViewDto>();
+            CreateMap<Team, TeamForViewDto>();
         }
     }
 }

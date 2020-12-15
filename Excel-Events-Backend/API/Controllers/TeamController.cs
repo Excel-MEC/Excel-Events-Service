@@ -44,7 +44,7 @@ namespace API.Controllers
          
         [SwaggerOperation(Description = "For finding Team with corresponding Id.")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Team>> CreateNewTeam(int id)
+        public async Task<ActionResult<TeamForViewDto>> CreateNewTeam(int id)
         {
             var team = await _repo.FindTeam(id);
             return Ok(team);
