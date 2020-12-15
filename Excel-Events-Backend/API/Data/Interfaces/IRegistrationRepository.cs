@@ -12,7 +12,7 @@ namespace API.Data.Interfaces
         Task<RegistrationForViewDto> Register(int excelId, DataForRegistrationDto dataForRegistration);
         Task<List<RegistrationForViewDto>> ClearUserData(DataForClearingUserRegistrationDto dataForClearingUserRegistration);
         Task<List<EventForListViewDto>> EventList(int excelId);
-        Task<List<UserForViewDto>> UserList(int eventId);
+        Task<List<RegistrationWithUserViewDto>> UserList(int eventId);
         Task<bool> HasRegistered(int excelId, int eventId);
         Task<RegistrationForViewDto> RemoveRegistration(int excelId, int eventId);
         Task<RegistrationForViewDto> ChangeTeam(int excelId, DataForRegistrationDto dataForRegistration);

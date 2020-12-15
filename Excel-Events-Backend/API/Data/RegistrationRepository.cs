@@ -109,14 +109,29 @@ namespace API.Data
             throw new DataInvalidException("Team is full");
         }
 
-        public async Task<List<UserForViewDto>> UserList(int eventId)
+        public async Task<List<RegistrationWithUserViewDto>> UserList(int eventId)
         {
-            var registrations = await _context.Registrations.Where(x => x.EventId == eventId).ToListAsync();
+            var registrations = await _context.Registrations.Include(registration=>registration.Team).Where(x => x.EventId == eventId).ToListAsync();
             var ids = registrations.Select(x => x.ExcelId).ToArray();
-            var users = new List<UserForViewDto>();
+            var registrationsWithUser = new List<RegistrationWithUserViewDto>();
             if (ids.Length > 0)
-                users = await _accountService.GetUsers(ids);
-            return users;
+            {
+                var users = await _accountService.GetUsers(ids);
+                var userDictionary = new Dictionary<int, UserForViewDto>();
+                foreach (var user in users)
+                {
+                    userDictionary[user.id] = user;
+                }
+
+                foreach(var registration in registrations)
+                {
+                    var registrationWithUser = _mapper.Map<RegistrationWithUserViewDto>(registration);
+                    registrationWithUser.User = userDictionary[registration.ExcelId];
+                    registrationsWithUser.Add(registrationWithUser);
+                }
+            }
+
+            return registrationsWithUser.OrderBy(registration => registration.TeamId).ToList();
         }
 
         private async Task<RegistrationForViewDto> RegisterWithTeam(int excelId, int eventId, int teamId)
