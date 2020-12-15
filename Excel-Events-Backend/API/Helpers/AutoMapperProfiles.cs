@@ -30,6 +30,7 @@ namespace API.Helpers
             CreateMap<Bookmark, BookmarkForViewDto>();
             CreateMap<Registration, RegistrationForViewDto>();
             CreateMap<Team, TeamForViewDto>();
+            CreateMap<Registration, RegistrationWithUserViewDto>();
         }
     }
 }
