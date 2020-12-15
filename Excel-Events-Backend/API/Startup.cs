@@ -35,6 +35,8 @@ namespace API
             services.AddDbContext<DataContext>(options =>
             {
                 string connectionString = Environment.GetEnvironmentVariable("POSTGRES_DB");
+                if (string.IsNullOrEmpty(connectionString))
+                    connectionString = "Host=127.0.0.1;Port=5432;Database=ExcelEvents;User Id=admin;Password=admin;";
                 options.UseNpgsql(connectionString);
             });
 
@@ -75,7 +77,6 @@ namespace API
             services.AddRepositoryServices();
 
 
-
             services.AddAuthentication("JwtAuthentication")
                 .AddScheme<BasicAuthenticationOptions, CustomAuthenticationHandler>("JwtAuthentication", null);
 
@@ -83,7 +84,6 @@ namespace API
             {
                 options.AddPolicy("ServiceAccount", policy => policy.RequireClaim("ServiceAccount"));
             });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,7 +93,7 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             // Add Exception Handlers
             app.ConfigureExceptionHandlerMiddleware();
 
@@ -104,7 +104,8 @@ namespace API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint(Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json","Excel Events");
+                c.SwaggerEndpoint(Environment.GetEnvironmentVariable("API_PREFIX") + "/swagger/v1/swagger.json",
+                    "Excel Events");
             });
 
             // Add CORS
