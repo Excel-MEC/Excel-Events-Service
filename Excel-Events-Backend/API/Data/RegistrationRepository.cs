@@ -23,14 +23,16 @@ namespace API.Data
         private readonly IMapper _mapper;
         private readonly IEventRepository _eventRepo;
         private readonly IEnvironmentService _env;
+        private readonly IAccountService _accountService;
 
         public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo,
-            IEnvironmentService env)
+            IEnvironmentService env, IAccountService accountService)
         {
             _mapper = mapper;
             _context = context;
             _eventRepo = eventRepo;
             _env = env;
+            _accountService = accountService;
         }
 
 
@@ -113,17 +115,7 @@ namespace API.Data
             var ids = registrations.Select(x => x.ExcelId).ToArray();
             var users = new List<UserForViewDto>();
             if (ids.Length > 0)
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("ServiceAuthorization",
-                        _env.ServiceKey);
-                    var response = await client.PostAsync(
-                        $"{_env.AccountsHost}/api/admin/users",
-                        new StringContent(JsonSerializer.Serialize(ids), Encoding.UTF8, "application/json"));
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    users = JsonSerializer.Deserialize<List<UserForViewDto>>(responseString);
-                }
-
+                users = await _accountService.GetUsers(ids);
             return users;
         }
 
