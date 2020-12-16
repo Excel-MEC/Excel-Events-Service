@@ -1,3 +1,4 @@
+using API.Dtos.Registration;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Models.FluentApi
@@ -20,6 +21,9 @@ namespace API.Models.FluentApi
                 .HasOne(r => r.Team)
                 .WithMany(t => t.Registrations)
                 .HasForeignKey(t => t.TeamId);
+
+            modelBuilder.Entity<Registration>()
+                .HasIndex(registration => new {registration.EventId, registration.ExcelId}).IsUnique();
         }
     }
 }
