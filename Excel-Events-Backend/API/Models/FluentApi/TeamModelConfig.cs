@@ -17,6 +17,9 @@ namespace API.Models.FluentApi
                 .HasForeignKey(t => t.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Team>()
+                .HasIndex(team => new {team.Name, team.EventId}).IsUnique();
+
         }
     }
 }

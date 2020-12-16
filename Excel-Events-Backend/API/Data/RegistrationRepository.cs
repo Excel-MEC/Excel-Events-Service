@@ -94,7 +94,7 @@ namespace API.Data
         {
             var eventWithTeams = await _eventRepo.GetEventWithTeam(dataForRegistration.EventId,
                 Convert.ToInt32(dataForRegistration.TeamId));
-            if(eventWithTeams.EventStatusId != 1) throw new DataInvalidException("Event has started");
+            if (eventWithTeams.EventStatusId != 1) throw new DataInvalidException("Event has started");
             if (eventWithTeams.Registrations.Count < eventWithTeams.TeamSize)
             {
                 var registration = await _context.Registrations.FirstOrDefaultAsync(r =>
@@ -111,7 +111,8 @@ namespace API.Data
 
         public async Task<List<RegistrationWithUserViewDto>> UserList(int eventId)
         {
-            var registrations = await _context.Registrations.Include(registration=>registration.Team).Where(x => x.EventId == eventId).ToListAsync();
+            var registrations = await _context.Registrations.Include(registration => registration.Team)
+                .Where(x => x.EventId == eventId).ToListAsync();
             var ids = registrations.Select(x => x.ExcelId).ToArray();
             var registrationsWithUser = new List<RegistrationWithUserViewDto>();
             if (ids.Length > 0)
@@ -123,7 +124,7 @@ namespace API.Data
                     userDictionary[user.id] = user;
                 }
 
-                foreach(var registration in registrations)
+                foreach (var registration in registrations)
                 {
                     var registrationWithUser = _mapper.Map<RegistrationWithUserViewDto>(registration);
                     registrationWithUser.User = userDictionary[registration.ExcelId];
@@ -136,15 +137,19 @@ namespace API.Data
 
         private async Task<RegistrationForViewDto> RegisterWithTeam(int excelId, int eventId, int teamId)
         {
+
             var eventToRegister = await _eventRepo.GetEventWithTeam(eventId, teamId);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
             if (!eventToRegister.IsTeam) throw new DataInvalidException("Given event is not team event");
+            var team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
+            if (team == null || team.EventId != eventId)
+                throw new DataInvalidException("Given team Id is invalid for the event");
             if (eventToRegister.TeamSize < eventToRegister.Registrations.Count)
                 throw new DataInvalidException("Team is full");
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId, TeamId = teamId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync();
-            newRegistration.Team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
+            newRegistration.Team = team;
             return _mapper.Map<RegistrationForViewDto>(newRegistration);
         }
     }

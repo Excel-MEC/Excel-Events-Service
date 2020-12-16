@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos.Registration;
 using API.Dtos.Teams;
+using API.Extensions.CustomExceptions;
 using API.Models;
 using API.Services.Interfaces;
 using AutoMapper;
@@ -31,10 +32,17 @@ namespace API.Data
 
         public async Task<Team> CreateTeam(DataForAddingTeamDto dataForAddingTeam)
         {
-            var newTeam = new Team() {Name = dataForAddingTeam.Name, EventId = dataForAddingTeam.EventId};
-            _context.Teams.Add(newTeam);
-            await _context.SaveChangesAsync();
-            return newTeam;
+            try
+            {
+                var newTeam = new Team() {Name = dataForAddingTeam.Name, EventId = dataForAddingTeam.EventId};
+                _context.Teams.Add(newTeam);
+                await _context.SaveChangesAsync();
+                return newTeam;
+            }
+            catch (DbUpdateException)
+            {
+                throw new DataInvalidException("Team name already taken");
+            }
         }
 
         public async Task<TeamForViewDto> FindTeam(int id)
@@ -44,7 +52,7 @@ namespace API.Data
                 registration.EventId == team.EventId && registration.TeamId == team.Id).ToListAsync();
             var excelIds = registrations.Select(registration => registration.ExcelId).ToArray();
             var members = new List<UserForViewDto>();
-            if(excelIds.Length > 0)
+            if (excelIds.Length > 0)
                 members = await _accountService.GetUsers(excelIds);
             var teamForView = _mapper.Map<TeamForViewDto>(team);
             teamForView.Members = members;
