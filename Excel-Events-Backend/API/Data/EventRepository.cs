@@ -134,6 +134,10 @@ namespace API.Data
             dest.NumberOfRounds = src.NumberOfRounds;
             dest.CurrentRound = src.CurrentRound;
             dest.NeedRegistration = src.NeedRegistration;
+            dest.Button = src.Button;
+            dest.RegistrationOpen = src.RegistrationOpen;
+            dest.RegistrationEndDate = src.RegistrationEndDate;
+            dest.RegistrationLink = src.RegistrationLink;
         }
     }
 }
