@@ -144,8 +144,9 @@ namespace API.Data
             var team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
             if (team == null || team.EventId != eventId)
                 throw new DataInvalidException("Given team Id is invalid for the event");
-            if (eventToRegister.TeamSize < eventToRegister.Registrations.Count)
+            if (eventToRegister.TeamSize <= eventToRegister.Registrations.Count)
                 throw new DataInvalidException("Team is full");
+            Console.WriteLine($"Registrations: {eventToRegister.Registrations.Count}");
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId, TeamId = teamId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync();
