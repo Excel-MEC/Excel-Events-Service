@@ -23,14 +23,16 @@ namespace API.Data
         private readonly IMapper _mapper;
         private readonly IEventRepository _eventRepo;
         private readonly IEnvironmentService _env;
+        private readonly IAccountService _accountService;
 
         public RegistrationRepository(DataContext context, IMapper mapper, IEventRepository eventRepo,
-            IEnvironmentService env)
+            IEnvironmentService env, IAccountService accountService)
         {
             _mapper = mapper;
             _context = context;
             _eventRepo = eventRepo;
             _env = env;
+            _accountService = accountService;
         }
 
 
@@ -41,8 +43,10 @@ namespace API.Data
             if (dataForRegistration.TeamId != null)
                 return await RegisterWithTeam(excelId, dataForRegistration.EventId,
                     Convert.ToInt32(dataForRegistration.TeamId));
-            var eventToRegister = await _eventRepo.GetEvent(dataForRegistration.EventId);
+            var eventToRegister = await _eventRepo.GetEvent(dataForRegistration.EventId, null);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
+            if (eventToRegister.RegistrationOpen == null || Convert.ToBoolean(eventToRegister.RegistrationOpen))
+                throw new DataInvalidException("Registration Closed");
             if (eventToRegister.IsTeam) throw new DataInvalidException("Need team Id to register for team event.");
             var newRegistration = new Registration {EventId = dataForRegistration.EventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(newRegistration);
@@ -92,7 +96,9 @@ namespace API.Data
         {
             var eventWithTeams = await _eventRepo.GetEventWithTeam(dataForRegistration.EventId,
                 Convert.ToInt32(dataForRegistration.TeamId));
-            if(eventWithTeams.EventStatusId != 1) throw new DataInvalidException("Event has started");
+            
+            if (eventWithTeams.RegistrationOpen == null || Convert.ToBoolean(eventWithTeams.RegistrationOpen))
+                throw new DataInvalidException("Registration Closed");
             if (eventWithTeams.Registrations.Count < eventWithTeams.TeamSize)
             {
                 var registration = await _context.Registrations.FirstOrDefaultAsync(r =>
@@ -107,37 +113,50 @@ namespace API.Data
             throw new DataInvalidException("Team is full");
         }
 
-        public async Task<List<UserForViewDto>> UserList(int eventId)
+        public async Task<List<RegistrationWithUserViewDto>> UserList(int eventId)
         {
-            var registrations = await _context.Registrations.Where(x => x.EventId == eventId).ToListAsync();
+            var registrations = await _context.Registrations.Include(registration => registration.Team)
+                .Where(x => x.EventId == eventId).ToListAsync();
             var ids = registrations.Select(x => x.ExcelId).ToArray();
-            var users = new List<UserForViewDto>();
+            var registrationsWithUser = new List<RegistrationWithUserViewDto>();
             if (ids.Length > 0)
-                using (var client = new HttpClient())
+            {
+                var users = await _accountService.GetUsers(ids);
+                var userDictionary = new Dictionary<int, UserForViewDto>();
+                foreach (var user in users)
                 {
-                    client.DefaultRequestHeaders.Add("ServiceAuthorization",
-                        _env.ServiceKey);
-                    var response = await client.PostAsync(
-                        $"{_env.AccountsHost}/api/admin/users",
-                        new StringContent(JsonSerializer.Serialize(ids), Encoding.UTF8, "application/json"));
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    users = JsonSerializer.Deserialize<List<UserForViewDto>>(responseString);
+                    userDictionary[user.id] = user;
                 }
 
-            return users;
+                foreach (var registration in registrations)
+                {
+                    var registrationWithUser = _mapper.Map<RegistrationWithUserViewDto>(registration);
+                    registrationWithUser.User = userDictionary[registration.ExcelId];
+                    registrationsWithUser.Add(registrationWithUser);
+                }
+            }
+
+            return registrationsWithUser.OrderBy(registration => registration.TeamId).ToList();
         }
 
         private async Task<RegistrationForViewDto> RegisterWithTeam(int excelId, int eventId, int teamId)
         {
+
             var eventToRegister = await _eventRepo.GetEventWithTeam(eventId, teamId);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
+            if (eventToRegister.RegistrationOpen == null || Convert.ToBoolean(eventToRegister.RegistrationOpen))
+                throw new DataInvalidException("Registration Closed");
             if (!eventToRegister.IsTeam) throw new DataInvalidException("Given event is not team event");
-            if (eventToRegister.TeamSize < eventToRegister.Registrations.Count)
+            var team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
+            if (team == null || team.EventId != eventId)
+                throw new DataInvalidException("Given team Id is invalid for the event");
+            if (eventToRegister.TeamSize <= eventToRegister.Registrations.Count)
                 throw new DataInvalidException("Team is full");
+            Console.WriteLine($"Registrations: {eventToRegister.Registrations.Count}");
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId, TeamId = teamId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync();
-            newRegistration.Team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
+            newRegistration.Team = team;
             return _mapper.Map<RegistrationForViewDto>(newRegistration);
         }
     }

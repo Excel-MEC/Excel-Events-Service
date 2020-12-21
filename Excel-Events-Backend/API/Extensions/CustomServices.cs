@@ -20,6 +20,9 @@ namespace API.Extensions
 
             // Add Highlight Service
             services.AddScoped<IHighlightService, HighlightService>();
+            
+            // Add Account Service
+            services.AddSingleton<IAccountService, AccountService>();
         }
     }
 }

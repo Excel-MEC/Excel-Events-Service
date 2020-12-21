@@ -9,7 +9,7 @@ namespace API.Data.Interfaces
     {
         Task<List<Team>> AllTeams();
         Task<Team> CreateTeam(DataForAddingTeamDto dataForAddingTeam);
-        Task<Team> FindTeam(int id);
+        Task<TeamForViewDto> FindTeam(int id);
         Task<List<Team>> FindEventTeams(int eventId);
     }
 }

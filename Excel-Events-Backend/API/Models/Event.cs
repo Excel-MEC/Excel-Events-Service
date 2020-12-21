@@ -34,6 +34,10 @@ namespace API.Models
         public ICollection<Registration> Registrations { get; set; }
         public ICollection<Bookmark> Bookmarks { get; set; }
         public bool? NeedRegistration { get; set; }
+        public bool? RegistrationOpen { get; set; }
+        public DateTime? RegistrationEndDate { get; set; }
+        public string Button { get; set; }
+        public string RegistrationLink { get; set; }
         public ICollection<Schedule> Rounds { get; set; }
         public ICollection<Team> Teams { get; set; }
     }
