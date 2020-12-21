@@ -22,7 +22,7 @@ namespace API.Controllers
         }
         
         [SwaggerOperation(Description = " This route is for returning all the EventHeads. Only admins can access these routes. ")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Core, Editor")]
         [HttpGet]   
         public async Task<List<EventHeadForViewDto>> EventHeadList()
         {
