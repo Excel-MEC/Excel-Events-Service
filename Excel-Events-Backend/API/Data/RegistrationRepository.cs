@@ -45,6 +45,8 @@ namespace API.Data
                     Convert.ToInt32(dataForRegistration.TeamId));
             var eventToRegister = await _eventRepo.GetEvent(dataForRegistration.EventId, null);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
+            if (eventToRegister.RegistrationOpen == null || Convert.ToBoolean(eventToRegister.RegistrationOpen))
+                throw new DataInvalidException("Registration Closed");
             if (eventToRegister.IsTeam) throw new DataInvalidException("Need team Id to register for team event.");
             var newRegistration = new Registration {EventId = dataForRegistration.EventId, ExcelId = excelId};
             await _context.Registrations.AddAsync(newRegistration);
@@ -94,7 +96,9 @@ namespace API.Data
         {
             var eventWithTeams = await _eventRepo.GetEventWithTeam(dataForRegistration.EventId,
                 Convert.ToInt32(dataForRegistration.TeamId));
-            if (eventWithTeams.EventStatusId != 1) throw new DataInvalidException("Event has started");
+            
+            if (eventWithTeams.RegistrationOpen == null || Convert.ToBoolean(eventWithTeams.RegistrationOpen))
+                throw new DataInvalidException("Registration Closed");
             if (eventWithTeams.Registrations.Count < eventWithTeams.TeamSize)
             {
                 var registration = await _context.Registrations.FirstOrDefaultAsync(r =>
@@ -140,12 +144,15 @@ namespace API.Data
 
             var eventToRegister = await _eventRepo.GetEventWithTeam(eventId, teamId);
             if (eventToRegister == null) throw new DataInvalidException("Invalid event ID.");
+            if (eventToRegister.RegistrationOpen == null || Convert.ToBoolean(eventToRegister.RegistrationOpen))
+                throw new DataInvalidException("Registration Closed");
             if (!eventToRegister.IsTeam) throw new DataInvalidException("Given event is not team event");
             var team = await _context.Teams.AsNoTracking().FirstOrDefaultAsync(team => team.Id == teamId);
             if (team == null || team.EventId != eventId)
                 throw new DataInvalidException("Given team Id is invalid for the event");
-            if (eventToRegister.TeamSize < eventToRegister.Registrations.Count)
+            if (eventToRegister.TeamSize <= eventToRegister.Registrations.Count)
                 throw new DataInvalidException("Team is full");
+            Console.WriteLine($"Registrations: {eventToRegister.Registrations.Count}");
             var newRegistration = new Registration {EventId = eventId, ExcelId = excelId, TeamId = teamId};
             await _context.Registrations.AddAsync(newRegistration);
             await _context.SaveChangesAsync();
