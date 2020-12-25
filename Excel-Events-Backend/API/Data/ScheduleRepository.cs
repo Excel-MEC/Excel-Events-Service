@@ -92,11 +92,12 @@ namespace API.Data
                 e.EventId == dataFromClient.EventId && e.RoundId == dataFromClient.RoundId);
             eventFromSchedule.Day = dataFromClient.Day;
             eventFromSchedule.Datetime = dataFromClient.Datetime;
+            eventFromSchedule.Round = dataFromClient.Round;
             if (dataFromClient.RoundId == 0)
             {
                 var scheduledEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
                 scheduledEvent.Day = dataFromClient.Day;
-                scheduledEvent.Datetime = dataFromClient.Datetime;
+                scheduledEvent.Datetime = dataFromClient.Datetime;                
             }
 
             await _context.SaveChangesAsync();
