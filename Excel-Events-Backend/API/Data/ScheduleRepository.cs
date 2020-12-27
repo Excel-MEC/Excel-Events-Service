@@ -32,8 +32,7 @@ namespace API.Data
                 .Select(g => new
                 {
                     g.Key,
-                    Events = g.OrderBy(x => x.Datetime)
-                        .ToList()
+                    Events = g.OrderBy(x => x.Datetime).ToList()
                 })
                 .OrderBy(x => x.Key)
                 .ToList();
