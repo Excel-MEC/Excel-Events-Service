@@ -40,5 +40,6 @@ namespace API.Models
         public string RegistrationLink { get; set; }
         public ICollection<Schedule> Rounds { get; set; }
         public ICollection<Team> Teams { get; set; }
+        public ICollection<Result> Results { get; set; }
     }
 }

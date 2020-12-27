@@ -16,6 +16,7 @@ namespace API.Data
             modelBuilder.AddScheduleModelConfig();
             modelBuilder.AddEventHeadModelConfig();  
             modelBuilder.AddTeamModelConfig();
+            modelBuilder.AddResultModelConfig();
         }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventHead> EventHeads { get; set; }
@@ -24,6 +25,7 @@ namespace API.Data
         public DbSet<Bookmark> Bookmarks { get; set; }
         public DbSet<Schedule> Rounds { get; set; }
         public DbSet<Team> Teams { get; set; }
+        public DbSet<Result> Results { get; set; }
     }
 
 }
