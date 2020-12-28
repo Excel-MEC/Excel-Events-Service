@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
 using API.Dtos;
@@ -21,13 +22,13 @@ namespace API.Controllers
         {
             _repo = repo;
         }
-        
-       
-        [SwaggerOperation(Description = "For retrieving all Results")]
+
+        [SwaggerOperation(Description = "For retrieving all results of events registered by a user.")]
         [HttpGet]
-        public async Task<ActionResult<List<Result>>> AllResults()
+        public async Task<ActionResult<List<Result>>> GetAllUserResults()
         {
-            var results = await _repo.AllResults();
+            var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
+            var results = await _repo.GetAllUserResults(excelId);
             return Ok(results);
         }
 
@@ -71,13 +72,6 @@ namespace API.Controllers
             var result = await _repo.GetEventResults(eventId);
             return Ok(result);
         }
-
-        [SwaggerOperation(Description = "For retrieving all results of events registered by a user.")]
-        [HttpGet("user/{excelId}")]
-        public async Task<ActionResult<List<Result>>> GetAllUserResults(int excelId)
-        {
-            var results = await _repo.GetAllUserResults(excelId);
-            return Ok(results);
-        }
+        
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
+using API.Dtos;
 using API.Dtos.Event;
 using API.Extensions.CustomExceptions;
 using API.Models;
@@ -52,14 +53,14 @@ namespace API.Data
 
         public async Task<EventForDetailedViewDto> GetEvent(int id, int? excelId)
         {
-            var eventFromdb = await _context.Events.Include(e => e.Rounds)
+            var eventFromdb = await _context.Events.Include(e => e.Rounds).Include(e => e.Results)
                 .Include(e => e.EventHead1).Include(e => e.EventHead2)
                 .FirstOrDefaultAsync(e => e.Id == id);
             var eventForView = _mapper.Map<EventForDetailedViewDto>(eventFromdb);
             if (excelId != null)
             {
                 eventForView.Registration =
-                    await _context.Registrations.FirstOrDefaultAsync(registration => registration.ExcelId == excelId && registration.EventId==eventForView.Id);
+                    await _context.Registrations.FirstOrDefaultAsync(registration => registration.ExcelId == excelId && registration.EventId == eventForView.Id);
             }
 
             return eventForView;
@@ -138,6 +139,25 @@ namespace API.Data
             dest.RegistrationOpen = src.RegistrationOpen;
             dest.RegistrationEndDate = src.RegistrationEndDate;
             dest.RegistrationLink = src.RegistrationLink;
+        }
+
+        public async Task<List<EventWithResultDto>> GetEventsWithResults()
+        {
+            var events = await _context.Events.Include(e => e.Results)
+            .Select(e => _mapper.Map<EventWithResultDto>(e))
+            .ToListAsync();
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                var e = events[i];
+                var length = e.Results.Count;
+                for (int j = 0; j < length; j++)
+                {
+                    e.Results[j].Event = null;
+                }
+            }
+
+            return events;
         }
     }
 }
