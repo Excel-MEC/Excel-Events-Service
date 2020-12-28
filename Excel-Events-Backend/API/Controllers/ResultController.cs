@@ -71,5 +71,13 @@ namespace API.Controllers
             var result = await _repo.GetEventResults(eventId);
             return Ok(result);
         }
+
+        [SwaggerOperation(Description = "For retrieving all results of events registered by a user.")]
+        [HttpGet("user/{excelId}")]
+        public async Task<ActionResult<List<Result>>> GetAllUserResults(int excelId)
+        {
+            var results = await _repo.GetAllUserResults(excelId);
+            return Ok(results);
+        }
     }
 }

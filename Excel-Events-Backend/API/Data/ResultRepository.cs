@@ -43,6 +43,27 @@ namespace API.Data
             return responseFromDb;
         }
 
+        public async Task<List<ResultForViewDto>> GetAllUserResults(int excelId)
+        {
+            var results = await _context.Registrations
+                                .Join(
+                                    _context.Results,
+                                    registration => registration.EventId,
+                                    result => result.EventId,
+                                    (registration, result) => new ResultForViewDto
+                                    {
+                                        Name = result.Name,
+                                        EventId = result.EventId,
+                                        ExcelId = result.ExcelId,
+                                        TeamId = result.TeamId,
+                                        Position = result.Position,
+                                        TeamMembers = result.TeamMembers,
+                                        TeamName = result.TeamName
+                                    }
+                                ).Where(r => r.ExcelId == excelId).Distinct().ToListAsync();
+            return results;
+        }
+
         public async Task<List<ResultForViewDto>> GetEventResults(int eventId)
         {
             var responseFromDb = await _context.Results.Where(r => r.EventId == eventId)

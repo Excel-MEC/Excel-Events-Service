@@ -9,6 +9,7 @@ namespace API.Data.Interfaces
     {
         Task<List<Result>> AllResults();
         Task<List<ResultForViewDto>> GetEventResults(int eventId);
+        Task<List<ResultForViewDto>> GetAllUserResults(int excelId);
         Task<Result> AddEventResult(DataForAddingResultDto dataFromClient);
         Task<Result> UpdateEventResult(DataForUpdatingResultDto dataFromClient);
         Task<Result> RemoveResult(int resultId);
