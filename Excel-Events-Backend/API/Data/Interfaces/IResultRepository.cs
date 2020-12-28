@@ -11,5 +11,7 @@ namespace API.Data.Interfaces
         Task<List<ResultForViewDto>> GetEventResults(int eventId);
         Task<Result> AddEventResult(DataForAddingResultDto dataFromClient);
         Task<Result> UpdateEventResult(DataForUpdatingResultDto dataFromClient);
+        Task<Result> RemoveResult(int resultId);
+        Task<List<Result>> RemoveAllResults(int eventId);
     }
 }

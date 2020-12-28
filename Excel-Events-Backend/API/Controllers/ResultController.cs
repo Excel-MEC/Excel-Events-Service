@@ -1,12 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using API.Data;
 using API.Data.Interfaces;
 using API.Dtos;
-using API.Dtos.Default;
-using API.Dtos.Teams;
 using API.Models;
-using API.Models.Custom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -49,6 +45,22 @@ namespace API.Controllers
         {
             var modifiedResult = await _repo.UpdateEventResult(dataForUpdatingResult);
             return Ok(modifiedResult);
+        }
+
+        [SwaggerOperation(Description = "For deleting a result of an event.")]
+        [HttpDelete]
+        public async Task<ActionResult<Result>> RemoveResult(DataForDeletingResultDto dataForDeletingResult)
+        {
+            var deletedResult = await _repo.RemoveResult(dataForDeletingResult.Id);
+            return Ok(deletedResult);
+        }
+
+        [SwaggerOperation(Description = "For deleting all results of an event.")]
+        [HttpDelete("event/{eventId}")]
+        public async Task<ActionResult<List<Result>>> RemoveAllResult(int eventId)
+        {
+            var deletedResults = await _repo.RemoveAllResults(eventId);
+            return Ok(deletedResults);
         }
         
         
