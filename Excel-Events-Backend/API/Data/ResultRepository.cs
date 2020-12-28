@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,15 +26,7 @@ namespace API.Data
         {
             try
             {
-                var newResult = new Result()
-                {
-                    EventId = dataFromClient.EventId,
-                    Name = dataFromClient.Name,
-                    Position = dataFromClient.Position,
-                    TeamMembers = dataFromClient.TeamMembers,
-                    TeamName = dataFromClient.TeamName
-                };
-
+                var newResult = _mapper.Map<Result>(dataFromClient);
                 _context.Results.Add(newResult);
                 await _context.SaveChangesAsync();
                 return newResult;
@@ -61,6 +54,41 @@ namespace API.Data
             return results;
         }
 
+        public async Task<List<Result>> RemoveAllResults(int eventId)
+        {
+            try
+            {
+                var resultFromDb = _context.Results.Where(r => r.EventId == eventId).ToList();
+                if (resultFromDb == null) throw new DataInvalidException("Invalid event ID");
+                _context.RemoveRange(resultFromDb);
+                await _context.SaveChangesAsync();
+                return resultFromDb;
+            }
+            catch (DbUpdateException)
+            {
+                throw new DataInvalidException("Problem saving data. Try again");
+            }
+        }
+
+        public async Task<Result> RemoveResult(int resultId)
+        {
+            try
+            {
+                var resultFromDb = await _context.Results.FirstOrDefaultAsync(r => r.Id == resultId);
+                _context.Remove(resultFromDb);
+                await _context.SaveChangesAsync();
+                return resultFromDb;
+            }
+            catch (DbUpdateException)
+            {
+                throw new DataInvalidException("Problem saving data. Try again");
+            }
+            catch (ArgumentNullException)
+            {
+                throw new DataInvalidException("Invalid Result Id. Try again");
+            }
+        }
+
         public async Task<Result> UpdateEventResult(DataForUpdatingResultDto dataFromClient)
         {
             try
@@ -68,6 +96,8 @@ namespace API.Data
                 var resultFromDb = await _context.Results.FindAsync(dataFromClient.Id);
                 resultFromDb.Name = dataFromClient.Name;
                 resultFromDb.EventId = dataFromClient.EventId;
+                resultFromDb.ExcelId = dataFromClient.ExcelId;
+                resultFromDb.TeamId = dataFromClient.TeamId;
                 resultFromDb.Position = dataFromClient.Position;
                 resultFromDb.TeamMembers = dataFromClient.TeamMembers;
                 resultFromDb.TeamName = dataFromClient.TeamName;

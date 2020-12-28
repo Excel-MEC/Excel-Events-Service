@@ -33,6 +33,8 @@ namespace API.Helpers
             CreateMap<Team, TeamForViewDto>();
             CreateMap<Registration, RegistrationWithUserViewDto>();
             CreateMap<Result, ResultForViewDto>();
+            CreateMap<DataForAddingResultDto, Result>();
+            CreateMap<DataForUpdatingResultDto, Result>();
         }
     }
 }
