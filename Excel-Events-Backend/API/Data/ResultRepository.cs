@@ -37,12 +37,6 @@ namespace API.Data
             }
         }
 
-        public async Task<List<Result>> AllResults()
-        {
-            var responseFromDb = await _context.Results.ToListAsync();
-            return responseFromDb;
-        }
-
         public async Task<List<ResultForViewDto>> GetAllUserResults(int excelId)
         {
             var results = await _context.Registrations
