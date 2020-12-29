@@ -27,7 +27,8 @@ namespace API.Data
             var eventForScheduleList = new List<EventForScheduleListViewDto>();
             var eventList = await _context.Rounds.Include(r => r.Event)
                 .Select(r => _mapper.Map<EventRoundForScheduleViewDto>(r))
-                .ToListAsync();
+                .ToListAsync(); 
+                
             var events = eventList.GroupBy(x => x.Day)
                 .Select(g => new
                 {
@@ -36,6 +37,7 @@ namespace API.Data
                 })
                 .OrderBy(x => x.Key)
                 .ToList();
+            
             foreach (var group in events)
             {
                 var eventForSchedule = new EventForScheduleListViewDto();
@@ -44,7 +46,6 @@ namespace API.Data
                 eventForSchedule.Events = eventListForView;
                 eventForScheduleList.Add(eventForSchedule);
             }
-
             return eventForScheduleList;
         }
 
@@ -59,6 +60,7 @@ namespace API.Data
                     Category = e.Event.Category,
                     Venue = e.Event.Venue,
                     Round = e.Round,
+                    RoundId = e.RoundId,
                     Datetime = e.Datetime,
                     Day = e.Day,
                     NeedRegistration = e.Event.NeedRegistration
