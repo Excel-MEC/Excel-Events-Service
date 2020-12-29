@@ -5,6 +5,7 @@ namespace API.Dtos.Schedule
 {
     public class EventRoundForScheduleViewDto
     {
+        public int RoundId { get; set; }
         public EventForListViewDto Event { get; set; }
         public string Round { get; set; }
         public int Day { get; set; }

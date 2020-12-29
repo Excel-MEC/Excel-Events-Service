@@ -1,3 +1,4 @@
+using API.Dtos;
 using API.Dtos.Bookmark;
 using API.Dtos.Event;
 using API.Dtos.EventHeads;
@@ -31,6 +32,9 @@ namespace API.Helpers
             CreateMap<Registration, RegistrationForViewDto>();
             CreateMap<Team, TeamForViewDto>();
             CreateMap<Registration, RegistrationWithUserViewDto>();
+            CreateMap<Result, ResultForViewDto>();
+            CreateMap<DataForAddingResultDto, Result>();
+            CreateMap<DataForUpdatingResultDto, Result>();
         }
     }
 }

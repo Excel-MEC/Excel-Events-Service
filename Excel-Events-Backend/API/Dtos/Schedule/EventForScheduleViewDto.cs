@@ -10,6 +10,8 @@ namespace API.Dtos.Schedule
         public string Category { get; set; }
         public string Venue { get; set; }
         public bool? NeedRegistration { get; set; }
+        public int RoundId { get; set; }
+
         public string Round { get; set; }
         public int Day { get; set; }
         public DateTime Datetime { get; set; }

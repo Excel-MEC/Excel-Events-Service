@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data.Interfaces;
+using API.Dtos;
 using API.Dtos.Event;
 using API.Extensions.CustomExceptions;
 using API.Models;
@@ -52,14 +53,14 @@ namespace API.Data
 
         public async Task<EventForDetailedViewDto> GetEvent(int id, int? excelId)
         {
-            var eventFromdb = await _context.Events.Include(e => e.Rounds)
+            var eventFromdb = await _context.Events.Include(e => e.Rounds).Include(e => e.Results)
                 .Include(e => e.EventHead1).Include(e => e.EventHead2)
                 .FirstOrDefaultAsync(e => e.Id == id);
             var eventForView = _mapper.Map<EventForDetailedViewDto>(eventFromdb);
             if (excelId != null)
             {
                 eventForView.Registration =
-                    await _context.Registrations.FirstOrDefaultAsync(registration => registration.ExcelId == excelId && registration.EventId==eventForView.Id);
+                    await _context.Registrations.FirstOrDefaultAsync(registration => registration.ExcelId == excelId && registration.EventId == eventForView.Id);
             }
 
             return eventForView;
@@ -138,6 +139,24 @@ namespace API.Data
             dest.RegistrationOpen = src.RegistrationOpen;
             dest.RegistrationEndDate = src.RegistrationEndDate;
             dest.RegistrationLink = src.RegistrationLink;
+        }
+       
+        public async Task<List<EventForListViewDto>> GetAllEventsWithResult()
+        {
+            var events = await _context.Events.Include(e => e.Results).Where(e => e.Results.Count > 0)
+            .Select(e => _mapper.Map<EventForListViewDto>(e))
+            .ToListAsync();
+            return events;
+        }
+
+        public async Task<List<EventForListViewDto>> GetAllUserEventsWithResult(int excelId)
+        {
+            var events = await _context.Registrations.Include(r => r.Event).ThenInclude(e => e.Results)
+            .Where(r => (r.ExcelId == excelId && r.Event.Results.Count > 0))
+            .Select( r => _mapper.Map<EventForListViewDto>(r.Event))
+            .ToListAsync();
+
+            return events;
         }
     }
 }
