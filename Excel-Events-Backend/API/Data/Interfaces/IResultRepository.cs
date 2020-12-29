@@ -7,7 +7,7 @@ namespace API.Data.Interfaces
 {
     public interface IResultRepository
     {
-        Task<List<ResultForViewDto>> GetEventResults(int eventId);
+        Task<ResultForListViewDto> GetEventResults(int eventId);
         Task<Result> AddEventResult(DataForAddingResultDto dataFromClient);
         Task<Result> UpdateEventResult(DataForUpdatingResultDto dataFromClient);
         Task<Result> RemoveResult(int resultId);
