@@ -3,21 +3,23 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201224205310_AddRoundFieldinRoundsTable")]
+    partial class AddRoundFieldinRoundsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.1");
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("API.Models.Bookmark", b =>
                 {
@@ -206,41 +208,6 @@ namespace API.Migrations
                     b.ToTable("Registrations");
                 });
 
-            modelBuilder.Entity("API.Models.Result", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<int>("EventId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ExcelId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Position")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TeamId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TeamMembers")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TeamName")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("Results");
-                });
-
             modelBuilder.Entity("API.Models.Schedule", b =>
                 {
                     b.Property<int>("Id")
@@ -339,17 +306,6 @@ namespace API.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("API.Models.Result", b =>
-                {
-                    b.HasOne("API.Models.Event", "Event")
-                        .WithMany("Results")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-                });
-
             modelBuilder.Entity("API.Models.Schedule", b =>
                 {
                     b.HasOne("API.Models.Event", "Event")
@@ -377,8 +333,6 @@ namespace API.Migrations
                     b.Navigation("Bookmarks");
 
                     b.Navigation("Registrations");
-
-                    b.Navigation("Results");
 
                     b.Navigation("Rounds");
 

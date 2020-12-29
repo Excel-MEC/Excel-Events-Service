@@ -15,6 +15,7 @@ namespace API.Extensions
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
             services.AddScoped<IEventHeadRepository, EventHeadRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IResultRepository, ResultRepository>();
         }
     }
 }

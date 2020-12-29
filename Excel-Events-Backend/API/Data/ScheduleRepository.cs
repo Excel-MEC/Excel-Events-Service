@@ -27,16 +27,17 @@ namespace API.Data
             var eventForScheduleList = new List<EventForScheduleListViewDto>();
             var eventList = await _context.Rounds.Include(r => r.Event)
                 .Select(r => _mapper.Map<EventRoundForScheduleViewDto>(r))
-                .ToListAsync();
+                .ToListAsync(); 
+                
             var events = eventList.GroupBy(x => x.Day)
                 .Select(g => new
                 {
                     g.Key,
-                    Events = g.OrderBy(x => x.Datetime)
-                        .ToList()
+                    Events = g.OrderBy(x => x.Datetime).ToList()
                 })
                 .OrderBy(x => x.Key)
                 .ToList();
+            
             foreach (var group in events)
             {
                 var eventForSchedule = new EventForScheduleListViewDto();
@@ -45,7 +46,6 @@ namespace API.Data
                 eventForSchedule.Events = eventListForView;
                 eventForScheduleList.Add(eventForSchedule);
             }
-
             return eventForScheduleList;
         }
 
@@ -60,6 +60,7 @@ namespace API.Data
                     Category = e.Event.Category,
                     Venue = e.Event.Venue,
                     Round = e.Round,
+                    RoundId = e.RoundId,
                     Datetime = e.Datetime,
                     Day = e.Day,
                     NeedRegistration = e.Event.NeedRegistration
@@ -92,11 +93,12 @@ namespace API.Data
                 e.EventId == dataFromClient.EventId && e.RoundId == dataFromClient.RoundId);
             eventFromSchedule.Day = dataFromClient.Day;
             eventFromSchedule.Datetime = dataFromClient.Datetime;
+            eventFromSchedule.Round = dataFromClient.Round;
             if (dataFromClient.RoundId == 0)
             {
                 var scheduledEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == dataFromClient.EventId);
                 scheduledEvent.Day = dataFromClient.Day;
-                scheduledEvent.Datetime = dataFromClient.Datetime;
+                scheduledEvent.Datetime = dataFromClient.Datetime;                
             }
 
             await _context.SaveChangesAsync();

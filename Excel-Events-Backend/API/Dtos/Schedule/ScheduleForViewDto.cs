@@ -8,7 +8,7 @@ namespace API.Dtos.Schedule
         public int Id { get; set; }
         public int EventId { get; set; }
         public int RoundId { get; set; }
-        public string Round => Constants.EventRounds[RoundId];
+        public string Round { get; set; }
         public int Day { get; set; }
         public DateTime Datetime { get; set; }
     }

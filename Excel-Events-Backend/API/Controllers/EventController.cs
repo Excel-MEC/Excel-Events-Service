@@ -96,5 +96,23 @@ namespace API.Controllers
             var filteredEvents = await _repo.EventListOfCategory(categoryId);
             return Ok(filteredEvents);
         }
+
+        [SwaggerOperation(Description = " This route returns a list of all the events whose results  are out")]
+        [HttpGet("results_out")]
+        public async Task<ActionResult<List<EventForListViewDto>>> GetEventswithResults()
+        {
+            var events = await _repo.GetAllEventsWithResult();
+            return Ok(events);
+        }
+
+        [SwaggerOperation(Description = "This route returns a list of all the events registered by a user whose results are out .")]
+        [HttpGet("results_out/user")]
+        public async Task<ActionResult<List<EventForListViewDto>>> GetAllUserEventsWithResult()
+        {
+            var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
+            var events = await _repo.GetAllUserEventsWithResult(excelId);
+            return Ok(events);
+        }
+        
     }
 }
