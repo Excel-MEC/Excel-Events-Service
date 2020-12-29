@@ -4,7 +4,7 @@ namespace API.Dtos
 {
     public class ResultForListViewDto
     {
-        public int EventId { get; set; }
+        public bool isTeam { get; set; }
         public List<ResultForViewDto> Results { get; set; }
     }
 }
