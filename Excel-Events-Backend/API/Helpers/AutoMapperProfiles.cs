@@ -35,7 +35,6 @@ namespace API.Helpers
             CreateMap<Result, ResultForViewDto>();
             CreateMap<DataForAddingResultDto, Result>();
             CreateMap<DataForUpdatingResultDto, Result>();
-            CreateMap<Event, EventWithResultDto>();
         }
     }
 }

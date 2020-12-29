@@ -22,15 +22,7 @@ namespace API.Controllers
         {
             _repo = repo;
         }
-
-        [SwaggerOperation(Description = "For retrieving all results of events registered by a user.")]
-        [HttpGet]
-        public async Task<ActionResult<List<Result>>> GetAllUserResults()
-        {
-            var excelId = int.Parse(User.Claims.First(x => x.Type == "user_id").Value);
-            var results = await _repo.GetAllUserResults(excelId);
-            return Ok(results);
-        }
+        
 
         [SwaggerOperation(Description = "For adding result of an event.")]
         [HttpPost]

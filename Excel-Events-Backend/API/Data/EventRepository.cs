@@ -140,22 +140,21 @@ namespace API.Data
             dest.RegistrationEndDate = src.RegistrationEndDate;
             dest.RegistrationLink = src.RegistrationLink;
         }
-
-        public async Task<List<EventWithResultDto>> GetEventsWithResults()
+       
+        public async Task<List<EventForListViewDto>> GetAllEventsWithResult()
         {
-            var events = await _context.Events.Include(e => e.Results)
-            .Select(e => _mapper.Map<EventWithResultDto>(e))
+            var events = await _context.Events.Include(e => e.Results).Where(e => e.Results.Count > 0)
+            .Select(e => _mapper.Map<EventForListViewDto>(e))
             .ToListAsync();
+            return events;
+        }
 
-            for (int i = 0; i < events.Count; i++)
-            {
-                var e = events[i];
-                var length = e.Results.Count;
-                for (int j = 0; j < length; j++)
-                {
-                    e.Results[j].Event = null;
-                }
-            }
+        public async Task<List<EventForListViewDto>> GetAllUserEventsWithResult(int excelId)
+        {
+            var events = await _context.Registrations.Include(r => r.Event).ThenInclude(e => e.Results)
+            .Where(r => (r.ExcelId == excelId && r.Event.Results.Count > 0))
+            .Select( r => _mapper.Map<EventForListViewDto>(r.Event))
+            .ToListAsync();
 
             return events;
         }
