@@ -117,6 +117,7 @@ namespace API.Data
 
         private static void CopyChanges(Event src, Event dest)
         {
+            dest.Name = src.Name;
             dest.Icon = src.Icon;
             dest.CategoryId = src.CategoryId;
             dest.EventTypeId = src.EventTypeId;
@@ -124,6 +125,7 @@ namespace API.Data
             dest.Format = src.Format;
             dest.Rules = src.Rules;
             dest.Venue = src.Venue;
+            dest.Day = src.Day;
             dest.Datetime = src.Datetime;
             dest.EntryFee = src.EntryFee;
             dest.PrizeMoney = src.PrizeMoney;
@@ -134,10 +136,10 @@ namespace API.Data
             dest.EventStatusId = src.EventStatusId;
             dest.NumberOfRounds = src.NumberOfRounds;
             dest.CurrentRound = src.CurrentRound;
-            dest.NeedRegistration = src.NeedRegistration;
-            dest.Button = src.Button;
+            dest.NeedRegistration = src.NeedRegistration;            
             dest.RegistrationOpen = src.RegistrationOpen;
             dest.RegistrationEndDate = src.RegistrationEndDate;
+            dest.Button = src.Button;
             dest.RegistrationLink = src.RegistrationLink;
         }
        
