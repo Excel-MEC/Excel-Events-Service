@@ -59,7 +59,7 @@ namespace API.Controllers
         
         [SwaggerOperation(Description = "For retrieving Result of a particular event")]
         [HttpGet("event/{eventId}")]
-        public async Task<ActionResult<List<ResultForViewDto>>> EventResults(int eventId)
+        public async Task<ActionResult<List<ResultForListViewDto>>> EventResults(int eventId)
         {
             var result = await _repo.GetEventResults(eventId);
             return Ok(result);
