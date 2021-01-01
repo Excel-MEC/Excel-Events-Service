@@ -2,6 +2,7 @@ namespace API.Dtos
 {
     public class ResultForViewDto
     { 
+        public int Id { get; set; }
         public int EventId { get; set; }
         public int ExcelId { get; set; }
         public int TeamId { get; set; }
