@@ -11,7 +11,6 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace API.Controllers
 {
     [SwaggerTag("The Routes under this controller need authorization.")]
-    [Authorize]
     [Route("/Result")]
     [ApiController]
     public class ResultController: ControllerBase
@@ -25,6 +24,7 @@ namespace API.Controllers
         
 
         [SwaggerOperation(Description = "For adding result of an event.")]
+        [Authorize(Roles = "Admin,Core,Editor")]
         [HttpPost]
         public async Task<ActionResult<Result>> AddEventResult(DataForAddingResultDto dataForAddingResult)
         {
@@ -33,6 +33,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "For updating result of an event.")]
+        [Authorize(Roles = "Admin,Core,Editor")]
         [HttpPut]
         public async Task<ActionResult<Result>> AddEventResult(DataForUpdatingResultDto dataForUpdatingResult)
         {
@@ -41,6 +42,7 @@ namespace API.Controllers
         }
 
         [SwaggerOperation(Description = "For deleting a result of an event.")]
+        [Authorize(Roles = "Admin, Editor")]
         [HttpDelete]
         public async Task<ActionResult<Result>> RemoveResult(DataForDeletingResultDto dataForDeletingResult)
         {
@@ -48,15 +50,6 @@ namespace API.Controllers
             return Ok(deletedResult);
         }
 
-        [SwaggerOperation(Description = "For deleting all results of an event.")]
-        [HttpDelete("event/{eventId}")]
-        public async Task<ActionResult<List<Result>>> RemoveAllResult(int eventId)
-        {
-            var deletedResults = await _repo.RemoveAllResults(eventId);
-            return Ok(deletedResults);
-        }
-        
-        
         [SwaggerOperation(Description = "For retrieving Result of a particular event")]
         [HttpGet("event/{eventId}")]
         public async Task<ActionResult<List<ResultForListViewDto>>> EventResults(int eventId)
@@ -64,6 +57,15 @@ namespace API.Controllers
             var result = await _repo.GetEventResults(eventId);
             return Ok(result);
         }
+
+        [SwaggerOperation(Description = "For deleting all results of an event.")]
+        [Authorize(Roles = "Admin, Editor")]
+        [HttpDelete("event/{eventId}")]
+        public async Task<ActionResult<List<Result>>> RemoveAllResult(int eventId)
+        {
+            var deletedResults = await _repo.RemoveAllResults(eventId);
+            return Ok(deletedResults);
+        } 
         
     }
 }
