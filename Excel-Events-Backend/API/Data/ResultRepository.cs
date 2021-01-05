@@ -38,13 +38,11 @@ namespace API.Data
         }
 
         public async Task<ResultForListViewDto> GetEventResults(int eventId)
-        {
-            var responseFromDb = await _context.Results.Where(r => r.EventId == eventId)
-                                                        .Select(r => _mapper.Map<ResultForViewDto>(r))
-                                                        .ToListAsync();
+        {            
+            var responseFromDb = await _context.Events.Include(e => e.Results).FirstOrDefaultAsync(e => e.Id == eventId);
             if (responseFromDb == null) throw new DataInvalidException("Invalid event ID");
-            var isTeam = responseFromDb[0].TeamId > 0;
-            var results = responseFromDb.OrderByDescending(r => r.Position).ToList();
+            var isTeam = responseFromDb.IsTeam;
+            var results = responseFromDb.Results.Select( r => _mapper.Map<ResultForViewDto>(r)).OrderByDescending(r => r.Position).ToList();
             var resultsForView = new ResultForListViewDto() { isTeam = isTeam, Results = results };
             return resultsForView;
         }
